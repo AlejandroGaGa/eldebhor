@@ -22,12 +22,15 @@ import Merch from "./Merch";
 import StickerBomb from "./StickerBomb";
 import FreeWall from "./FreeWall";
 import Footer from "./Footer";
+import { CartProvider } from "./CartProvider";
+import CartDrawer from "./CartDrawer";
+import type { Catalog } from "@/lib/shopify-types";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
 
-export default function Experience() {
+export default function Experience({ catalog }: { catalog: Catalog }) {
   const entered = useStore((s) => s.entered);
 
   // Smooth scroll, synced with GSAP's ticker
@@ -93,7 +96,7 @@ export default function Experience() {
   }, [entered]);
 
   return (
-    <>
+    <CartProvider enabled={catalog.source === "shopify"}>
       <a
         href="#muro-libre"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:bg-taxi focus:px-4 focus:py-3 focus:font-block focus:text-ink"
@@ -103,6 +106,7 @@ export default function Experience() {
       <SvgDefs />
       <Loader />
       <Hud />
+      <CartDrawer />
       <SpotifyPlayer />
       <main id="main" inert={!entered} aria-hidden={!entered}>
         <Hero />
@@ -112,13 +116,13 @@ export default function Experience() {
         <Gallery />
         <CanLab />
         <StickerBomb />
-        <Merch />
+        <Merch catalog={catalog} />
         <FreeWall />
         <Footer />
       </main>
       <Cursor />
       <div className="grain" aria-hidden="true" />
-    </>
+    </CartProvider>
   );
 }
 

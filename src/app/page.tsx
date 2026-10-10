@@ -1,5 +1,7 @@
 import Experience from "@/components/Experience";
+import { loadCatalog } from "@/lib/catalog";
 
-export default function Page() {
-  return <Experience />;
+export default async function Page() {
+  const catalog = await loadCatalog();
+  return <Experience catalog={catalog} />;
 }
