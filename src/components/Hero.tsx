@@ -1,17 +1,17 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { store, useStore } from "@/lib/store";
 import { usePaintSurface } from "@/lib/usePaintSurface";
 import { animatePath, blobFillPath, ringPath } from "@/lib/spray";
-import { depthShadow, pieceFill } from "@/lib/color";
+import { pieceFill } from "@/lib/color";
 import { slap } from "@/lib/audio";
 import { PALETTE } from "@/lib/palette";
 import { useFinePointer, useReducedMotion } from "@/lib/scroll";
 
-const WORD = "ELDEBHOR";
 const FILLS = [
   ["#2ec6ee", "#241b51"],
   ["#45d2f5", "#241b51"],
@@ -215,44 +215,30 @@ export default function Hero() {
 
       <div className="pointer-events-none relative z-10 flex h-full flex-col items-center justify-center px-2">
         <div className="relative">
-          <h1
-            id="hero-title"
-            ref={title}
-            aria-label="ELDEBHOR"
-            className="tag flex select-none flex-wrap justify-center text-[30vw] sm:flex-nowrap sm:whitespace-nowrap sm:text-[clamp(3.6rem,19.5vw,16.5rem)]"
-            style={{ filter: reduced || !fine ? undefined : "url(#boil)" }}
-          >
-            {WORD.split("").map((ch, i) => [
-              i === 5 ? <span key="br" aria-hidden="true" className="basis-full sm:hidden" /> : null,
-              <span
-                key={i}
-                aria-hidden="true"
-                className="tag-l pointer-events-auto invisible"
-                onPointerDown={(e) => e.pointerType === "mouse" && hitLetter(e)}
-                onClick={(e) => {
-                  // touch / pen tap
-                  if ((e.nativeEvent as PointerEvent).pointerType !== "mouse") hitLetter(e as unknown as React.PointerEvent<HTMLSpanElement>);
-                }}
-                data-cursor="¡REVIENTA!"
-              >
-                <span
-                  className="tag-inner relative block"
-                  style={
-                    {
-                      "--fill": pieceFill(FILLS[i][0], FILLS[i][1]),
-                      "--outer": "#241b51",
-                      "--depth": depthShadow("#120b2e", 12),
-                      "--depth-outer": depthShadow("#241b51", 14),
-                    } as React.CSSProperties
-                  }
-                >
-                  <span className="lo">{ch}</span>
-                  <span className="ld">{ch}</span>
-                  <span className="lf">{ch}</span>
-                  <span className="lh">{ch}</span>
-                </span>
-              </span>,
-            ])}
+          <h1 id="hero-title" ref={title} aria-label="ELDEBHOR" className="select-none">
+            <span
+              aria-hidden="true"
+              className="tag-l pointer-events-auto invisible block"
+              onPointerDown={(e) => e.pointerType === "mouse" && hitLetter(e)}
+              onClick={(e) => {
+                // touch / pen tap
+                if ((e.nativeEvent as PointerEvent).pointerType !== "mouse") hitLetter(e as unknown as React.PointerEvent<HTMLSpanElement>);
+              }}
+              data-cursor="¡REVIENTA!"
+            >
+              <span className="tag-inner relative block">
+                <Image
+                  src="/brand/logo-tag.png"
+                  alt=""
+                  width={880}
+                  height={669}
+                  priority
+                  sizes="(min-width: 1024px) 760px, 90vw"
+                  className="h-auto w-[min(88vw,calc(40dvh*1.315),52rem)] sm:w-[min(88vw,calc(54dvh*1.315),64rem)] drop-shadow-[6px_8px_0_rgba(0,0,0,.45)]"
+                  draggable={false}
+                />
+              </span>
+            </span>
           </h1>
 
           {/* sparkles + crown + arrow */}
@@ -277,10 +263,6 @@ export default function Hero() {
               />
             </svg>
           ))}
-          <svg data-hero-extra viewBox="0 0 120 56" aria-hidden="true" className="invisible absolute -top-[17%] left-[34%] w-[15%] -rotate-3">
-            <ellipse cx="60" cy="28" rx="50" ry="17" fill="none" stroke="#241b51" strokeWidth="15" />
-            <ellipse cx="60" cy="28" rx="50" ry="17" fill="none" stroke="#2ec6ee" strokeWidth="7" />
-          </svg>
           <svg data-hero-extra viewBox="0 0 200 90" aria-hidden="true" className="invisible absolute -bottom-[16%] right-[-4%] w-[22%] rotate-6">
             <path d="M6 60 C60 90 120 80 170 34" fill="none" stroke="#000" strokeWidth="20" strokeLinecap="round" />
             <path d="M6 60 C60 90 120 80 170 34" fill="none" stroke="#ffe600" strokeWidth="11" strokeLinecap="round" />
@@ -308,7 +290,7 @@ export default function Hero() {
 
 function ScrollCue() {
   return (
-    <div className="pointer-events-none absolute bottom-[max(1.25rem,env(safe-area-inset-bottom))] left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1" aria-hidden="true">
+    <div className="pointer-events-none absolute [@media(max-height:640px)]:hidden bottom-[max(1.25rem,env(safe-area-inset-bottom))] left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1" aria-hidden="true">
       <span className="rounded-sm bg-ink px-2 py-1 font-mono text-sm uppercase tracking-[0.25em] text-bone">Baja</span>
       <svg width="28" height="56" viewBox="0 0 28 56" className="wobble">
         <path d="M14 2 V44" stroke="#ffe600" strokeWidth="6" strokeLinecap="round" />
