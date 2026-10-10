@@ -1,9 +1,11 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { getLenis } from "@/lib/scroll";
+import { OBRAS } from "@/data/obras";
 
 const WINDOWS = ["4%", "35%", "53%", "84%"];
 const DOORS = ["20%", "69%"];
@@ -111,16 +113,23 @@ export default function Train() {
         <div className="relative z-10 motion-reduce:overflow-x-auto motion-reduce:pb-6">
           <div ref={track} className="flex w-max items-end gap-3 pl-[100vw] pr-[30vw] motion-reduce:pl-4 motion-reduce:pr-4">
             <Wagon front>
-              <span className="absolute left-[18%] top-[62%] -rotate-6 font-marker text-[6cqw] text-[#1b1b1b]">ELD x DBH</span>
+              <Image
+                src="/brand/logo-tag.png"
+                alt=""
+                width={880}
+                height={669}
+                sizes="260px"
+                className="absolute bottom-[12%] left-[40%] h-auto w-[30%] -rotate-3 drop-shadow-[3px_3px_0_rgba(0,0,0,.35)]"
+              />
             </Wagon>
             <Wagon number="2026">
-              <PieceWet />
+              <Panels ids={["verde-morado", "tag-cian", "wildstyle-cian-rojo"]} />
             </Wagon>
             <Wagon number="3417">
-              <PieceChrome />
+              <Panels ids={["burbuja-blanco-negro", "tag-humo", "gorila-vs-dino"]} />
             </Wagon>
             <Wagon number="0303">
-              <PieceCharacter />
+              <Panels ids={["burbuja-blanca", "tag-cian", "verde-morado"]} />
             </Wagon>
             <Wagon number="9999">
               <PieceEnd />
@@ -175,77 +184,34 @@ function Wagon({ children, number, front }: { children?: React.ReactNode; number
 
 const pieceBox = "absolute inset-x-[3%] top-[37%] bottom-[11%]";
 
-function PieceWet() {
-  return (
-    <figure data-piece className={pieceBox}>
-      <div
-        className="absolute inset-0 rounded-[40%]"
-        style={{ background: "radial-gradient(closest-side, #00c2ff 55%, transparent), radial-gradient(40% 60% at 80% 40%, #9b5cff 40%, transparent)", filter: "blur(6px)" }}
-      />
-      <div className="relative flex h-full items-center justify-center">
-        <span
-          className="font-wet text-[12.5cqw] leading-none"
-          style={{
-            color: "#ff2e88",
-            WebkitTextStroke: "0.9cqw #000",
-            paintOrder: "stroke fill",
-            textShadow: "0.6cqw 0.6cqw 0 #000, 1.2cqw 1.2cqw 0 #ffe600, 1.5cqw 1.5cqw 0 #000",
-          }}
-        >
-          ELDEBHOR
-        </span>
-      </div>
-      <figcaption className="sr-only">Pieza ELDEBHOR en letras chorreadas rosas sobre nube azul</figcaption>
-    </figure>
-  );
-}
+/** Relación de aspecto de cada foto (ancho / alto) para que el tablero no recorte la obra. */
+const RATIO: Record<string, number> = {
+  "verde-morado": 1080 / 607,
+  "gorila-vs-dino": 739 / 949,
+  "burbuja-blanca": 1200 / 1600,
+  "tag-cian": 1,
+  "tag-humo": 1,
+  "burbuja-blanco-negro": 718 / 478,
+  "wildstyle-cian-rojo": 512 / 733,
+};
+const TILT = ["-rotate-2", "rotate-1", "-rotate-1"];
 
-function PieceChrome() {
+/** Fotos de las obras de ELDEBHOR pegadas sobre el costado del vagón. */
+function Panels({ ids }: { ids: string[] }) {
+  const obras = ids.map((id) => OBRAS.find((o) => o.id === id)).filter((o): o is NonNullable<typeof o> => !!o?.imagen);
   return (
     <figure data-piece className={pieceBox}>
-      <div className="relative flex h-full items-center justify-center gap-[2cqw]">
-        <span
-          className="font-block text-[17cqw] leading-none"
-          style={{
-            color: "transparent",
-            backgroundImage: "linear-gradient(180deg,#ffffff 0%,#d9dde3 40%,#5d636c 49%,#f1f3f6 55%,#a2a8b0 80%,#ffffff 100%)",
-            WebkitBackgroundClip: "text",
-            backgroundClip: "text",
-            WebkitTextStroke: "0.6cqw #000",
-            filter: "drop-shadow(1cqw 1cqw 0 #ff2e88) drop-shadow(0.4cqw 0.4cqw 0 #000)",
-          }}
-        >
-          ELD
-        </span>
-        <span className="flex flex-col items-start">
-          <span className="rotate-[-8deg] font-tag text-[7cqw] leading-none text-brand" style={{ WebkitTextStroke: "0.3cqw #000", paintOrder: "stroke fill" }}>
-            throw
-          </span>
-          <span className="rotate-[-8deg] font-tag text-[7cqw] leading-none text-[#ffe600]" style={{ WebkitTextStroke: "0.3cqw #000", paintOrder: "stroke fill" }}>
-            up &apos;26
-          </span>
-        </span>
+      <div className="flex h-full items-center justify-evenly gap-[1.5cqw]">
+        {obras.map((o, i) => (
+          <div
+            key={`${o.id}-${i}`}
+            className={`relative h-full overflow-hidden border-[0.6cqw] border-black bg-black shadow-[0.8cqw_0.8cqw_0_rgba(0,0,0,.45)] ${TILT[i % TILT.length]}`}
+            style={{ aspectRatio: RATIO[o.id] ?? 1 }}
+          >
+            <Image src={o.imagen!} alt={o.alt ?? o.titulo} fill sizes="(min-width: 768px) 420px, 300px" className="object-cover" />
+          </div>
+        ))}
       </div>
-      <figcaption className="sr-only">Throw-up cromado ELD con letras de borde negro</figcaption>
-    </figure>
-  );
-}
-
-function PieceCharacter() {
-  return (
-    <figure data-piece className={pieceBox}>
-      <div className="relative flex h-full items-center justify-center gap-[3cqw]">
-        <Gotita className="h-[110%] w-auto -rotate-6" />
-        <span
-          className="font-tag text-[10.5cqw] leading-[0.9] text-brand"
-          style={{ WebkitTextStroke: "0.7cqw #000", paintOrder: "stroke fill", textShadow: "0.8cqw 0.8cqw 0 #9b5cff" }}
-        >
-          sin
-          <br />
-          permiso
-        </span>
-      </div>
-      <figcaption className="sr-only">Personaje Gotita, una gota de pintura con un ojo, junto al texto sin permiso</figcaption>
     </figure>
   );
 }
@@ -254,15 +220,16 @@ function PieceEnd() {
   return (
     <figure data-piece className={pieceBox}>
       <div className="absolute inset-[6%] -rotate-2 rounded-[30%] bg-[#9b5cff]" style={{ filter: "blur(4px)" }} />
-      <div className="relative flex h-full flex-col items-center justify-center">
-        <span className="font-spray text-[11cqw] leading-none text-[#ffe600]" style={{ textShadow: "0.5cqw 0.5cqw 0 #000" }}>
-          FIN DE
-        </span>
-        <span className="font-spray text-[11cqw] leading-none text-bone" style={{ textShadow: "0.5cqw 0.5cqw 0 #000" }}>
-          LÍNEA
-        </span>
+      <div className="relative flex h-full items-center justify-center">
+        <Image
+          src="/brand/logo-tag.png"
+          alt="Tag dhebor en cian con contorno azul marino"
+          width={880}
+          height={669}
+          sizes="(min-width: 768px) 360px, 260px"
+          className="h-[120%] w-auto drop-shadow-[0.6cqw_0.6cqw_0_rgba(0,0,0,.5)]"
+        />
       </div>
-      <figcaption className="sr-only">Texto fin de línea en letras de esténcil amarillas y blancas sobre fondo morado</figcaption>
     </figure>
   );
 }
