@@ -11,7 +11,7 @@ const fmt = (s: number) => {
 
 /**
  * Mini reproductor: aparece cuando el «Manifiesto 001» entra en pantalla y arranca
- * la canción (/rolita.mp3) desde el 1:02 si el visitante entró con sonido.
+ * la canción (/rolita.mp3) desde el segundo 4 si el visitante entró con sonido.
  * Si el navegador bloquea el audio automático, queda listo con el botón de play.
  */
 export default function SpotifyPlayer() {

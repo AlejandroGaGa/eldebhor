@@ -11,5 +11,5 @@ export const igDM = `https://ig.me/m/${INSTAGRAM}`;
 /** Canción que suena al llegar al «Manifiesto 001» (archivo en /public). */
 export const SONG_SRC = "/rolita.mp3";
 export const SONG_TITLE = "Rolita";
-/** Segundo en el que empieza (1:02). Pon 0 para que arranque desde el principio. */
-export const SONG_START = 62;
+/** Segundo en el que empieza (0:04). Pon 0 para que arranque desde el principio. */
+export const SONG_START = 4;
