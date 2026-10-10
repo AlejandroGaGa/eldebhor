@@ -59,3 +59,20 @@ O con la CLI: `npx vercel` (preview) y `npx vercel --prod`.
 - Todo control es un `<button>`/`<input>` nativo con foco visible; selector de colores con radios reales.
 - Enlace "Saltar al muro libre"; el cursor personalizado solo aparece con mouse.
 - En celular el hero no captura el dedo (para no bloquear el scroll); se pinta en el muro libre.
+
+## Tienda con Shopify
+
+El merch se lee de Shopify (Storefront API) y el pago lo hace el checkout de Shopify. La página sigue siendo
+esta misma (Next.js); Shopify solo pone catálogo, inventario, carrito, checkout y pedidos.
+
+1. En el admin de Shopify instala el canal **Headless**, crea un storefront y copia sus tokens.
+2. Copia `.env.example` a `.env.local` y llénalo (`SHOPIFY_STORE_DOMAIN`, token público y token privado).
+   Los tokens nunca llegan al navegador: el carrito pasa por `/api/cart` en el servidor.
+3. En cada producto de Shopify, en **Canales de venta**, activa el canal **Headless** (si no, la API no lo devuelve).
+4. `npm run dev`. En producción, pon las mismas variables en el hosting.
+
+- Los productos se guardan unos minutos en caché (`src/lib/catalog.ts`); un cambio de precio o de inventario
+  tarda hasta ~1–2 minutos en verse.
+- Si Shopify no está configurado, falla o no tiene productos publicados, el sitio usa el catálogo de
+  `src/data/merch.ts` con «Pedir por DM», así que nunca se rompe.
+- Las opciones (talla, color…) y variantes se toman de Shopify; una variante sin inventario se muestra como agotada.
