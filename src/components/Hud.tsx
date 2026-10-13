@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useCart } from "./CartProvider";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -14,7 +13,6 @@ export default function Hud() {
   const sound = useStore((s) => s.sound);
   const color = useStore((s) => s.color);
   const colorName = useStore((s) => s.colorName);
-  const { enabled: cartOn, count, setOpen } = useCart();
   const root = useRef<HTMLDivElement>(null);
   const level = useRef<HTMLDivElement>(null);
   const pctRef = useRef<HTMLSpanElement>(null);
@@ -67,32 +65,6 @@ export default function Hud() {
             <span className="h-5 w-5 rounded-full border-2 border-bone" style={{ background: color }} aria-hidden="true" />
             <span className="hidden sm:inline">Lata:</span> <span className="font-bold">{colorName}</span>
           </p>
-          {cartOn && (
-            <button
-              type="button"
-              onClick={() => {
-                blip(800);
-                setOpen(true);
-              }}
-              aria-label={`Abrir carrito, ${count} ${count === 1 ? "producto" : "productos"}`}
-              data-cursor="CARRITO"
-              className="relative flex min-h-[48px] min-w-[48px] items-center justify-center rounded-full bg-ink/80 px-3 text-bone backdrop-blur-sm"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M3 4h2.5l2.2 11h10.6l2-8H7" />
-                <circle cx="9.5" cy="19.5" r="1.4" fill="currentColor" stroke="none" />
-                <circle cx="17" cy="19.5" r="1.4" fill="currentColor" stroke="none" />
-              </svg>
-              {count > 0 && (
-                <span
-                  aria-hidden="true"
-                  className="absolute -right-1 -top-1 flex h-6 min-w-6 items-center justify-center rounded-full border-2 border-black bg-bubble px-1 font-block text-xs text-ink"
-                >
-                  {count}
-                </span>
-              )}
-            </button>
-          )}
           <button
             type="button"
             onClick={toggleSound}

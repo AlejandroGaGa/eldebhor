@@ -3,7 +3,7 @@
  *
  * Cada producto usa una foto de /public/merch/ (campo `imagen`).
  * - `precio`: pon el número cuando lo tengas; sin precio la tarjeta muestra
- *   «Consultar» y el mensaje de DM no lleva precio.
+ *   «Consultar» y el mensaje de WhatsApp no lleva precio.
  * - `opciones` + `etiqueta`: lo que el cliente elige antes de pedir
  *   (tallas, colores, modelos). Sin `opciones` se pide directo.
  * - `agotado`: bloquea el botón y pone el sello.
@@ -87,7 +87,7 @@ export const MERCH: Producto[] = [
   {
     id: "tintas-colores",
     nombre: "Chorreadores en colores surtidos",
-    descripcion: "Botellas con gotero en muchos colores. Precio por pieza; pregunta por DM cuáles hay.",
+    descripcion: "Botellas con gotero en muchos colores. Precio por pieza; pregunta por WhatsApp cuáles hay.",
     precio: 50,
     imagen: "/merch/tintas-colores.jpg",
     alt: "Vista desde arriba de muchas botellas gotero con tapa blanca en colores azul, rosa, negro, morado, menta, rojo y blanco",

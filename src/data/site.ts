@@ -1,12 +1,16 @@
 /**
  * Datos generales del sitio.
- * INSTAGRAM: usuario de la cuenta (sin @). Todo el sitio lo usa: botón de perfil y «Pedir por DM».
+ * INSTAGRAM: usuario de la cuenta (sin @), para el botón de perfil.
+ * WHATSAPP: número de pedidos con lada (52 = México), solo dígitos.
  */
 export const INSTAGRAM = "eldhebor";
 
 export const igProfile = `https://instagram.com/${INSTAGRAM}`;
-/** Abre directamente el chat de mensajes directos con la cuenta. */
-export const igDM = `https://ig.me/m/${INSTAGRAM}`;
+
+/** Número donde llegan los pedidos (solo dígitos, con 52 de México). */
+export const WHATSAPP = "524775885719";
+/** Chat de WhatsApp con el mensaje ya escrito. */
+export const waLink = (mensaje: string) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
 
 /** Canción que suena al llegar al «Manifiesto 001» (archivo en /public). */
 export const SONG_SRC = "/rolita.mp3";

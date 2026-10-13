@@ -6,21 +6,17 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { MERCH, type Producto } from "@/data/merch";
-import { igDM, igProfile, INSTAGRAM } from "@/data/site";
+import { igProfile, INSTAGRAM, waLink } from "@/data/site";
 import { blip, slap } from "@/lib/audio";
 import ProductArt from "./ProductArt";
-import { useCart } from "./CartProvider";
-import type { Catalog, ShopProduct } from "@/lib/shopify-types";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const money = (n: number, cur: string) => `$${n.toLocaleString("es-MX")} ${cur}`;
 
-export default function Merch({ catalog }: { catalog: Catalog }) {
-  const shop = catalog.source === "shopify";
-  const { setOpen } = useCart();
+export default function Merch() {
   const root = useRef<HTMLElement>(null);
-  const [toast, setToast] = useState<{ msg: string; cart?: boolean } | null>(null);
+  const [toast, setToast] = useState("");
   const toastTimer = useRef<number>(0);
 
   useGSAP(
@@ -51,10 +47,10 @@ export default function Merch({ catalog }: { catalog: Catalog }) {
     { scope: root },
   );
 
-  const say = (msg: string, cart = false) => {
-    setToast({ msg, cart });
+  const say = (msg: string) => {
+    setToast(msg);
     window.clearTimeout(toastTimer.current);
-    toastTimer.current = window.setTimeout(() => setToast(null), 6000);
+    toastTimer.current = window.setTimeout(() => setToast(""), 6000);
   };
 
   return (
@@ -69,7 +65,7 @@ export default function Merch({ catalog }: { catalog: Catalog }) {
         <div className="flex w-max animate-[marquee_18s_linear_infinite] whitespace-nowrap font-block text-xl text-brand motion-reduce:animate-none sm:text-2xl">
           {Array.from({ length: 8 }, (_, i) => (
             <span key={i} className="pr-6">
-              {shop ? "DROP 001 ✦ HECHO A MANO ✦ PAGA EN LÍNEA ✦ EDICIÓN LIMITADA ✦" : "DROP 001 ✦ HECHO A MANO ✦ PIDE POR DM ✦ EDICIÓN LIMITADA ✦"}
+              DROP 001 ✦ HECHO A MANO ✦ PIDE POR WHATSAPP ✦ EDICIÓN LIMITADA ✦
             </span>
           ))}
         </div>
@@ -88,15 +84,7 @@ export default function Merch({ catalog }: { catalog: Catalog }) {
               ))}
             </h2>
             <p className="mt-2 max-w-xl text-lg leading-relaxed">
-              {shop ? (
-                <>
-                  Elige tu pieza, toca <strong>Agregar al carrito</strong> y paga en línea con el checkout seguro de Shopify. ¿Dudas? Escríbenos por Instagram.
-                </>
-              ) : (
-                <>
-                  Todo se pide por mensaje directo en Instagram. Elige tu pieza, toca <strong>Pedir por DM</strong> y te copiamos el mensaje listo para pegar.
-                </>
-              )}
+              Todo se pide por WhatsApp. Elige tu pieza, toca <strong>Pedir por WhatsApp</strong> y se abre el chat con tu pedido ya escrito.
             </p>
             <p className="mt-3 max-w-xl -rotate-1 font-marker text-xl">Cada compra es una comida que ya no sale de 20 varos.</p>
           </div>
@@ -116,17 +104,11 @@ export default function Merch({ catalog }: { catalog: Catalog }) {
         <div className="relative mt-14">
           <div className="absolute inset-x-0 top-0 hidden h-4 rounded-full border-4 border-black bg-[linear-gradient(180deg,#f2f2f2,#8d8d8d)] lg:block" aria-hidden="true" />
           <ul className="grid grid-cols-1 gap-x-8 gap-y-14 pt-2 sm:grid-cols-2 lg:grid-cols-3">
-            {catalog.source === "shopify"
-              ? catalog.products.map((p) => (
-                  <li key={p.id} data-hang>
-                    <ShopCard p={p} onAdded={(m) => say(m, true)} />
-                  </li>
-                ))
-              : MERCH.map((p) => (
-                  <li key={p.id} data-hang>
-                    <ProductCard p={p} onToast={say} />
-                  </li>
-                ))}
+            {MERCH.map((p) => (
+              <li key={p.id} data-hang>
+                <ProductCard p={p} onToast={say} />
+              </li>
+            ))}
           </ul>
         </div>
       </div>
@@ -134,21 +116,9 @@ export default function Merch({ catalog }: { catalog: Catalog }) {
       <div
         role="status"
         aria-live="polite"
-        className={`fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-[70] mx-auto flex max-w-md flex-wrap items-center justify-between gap-3 border-4 border-black bg-ink p-4 text-base text-bone shadow-[6px_6px_0_#2ec6ee] transition-all duration-300 ${toast ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0"}`}
+        className={`fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-[70] mx-auto max-w-md border-4 border-black bg-ink p-4 text-base text-bone shadow-[6px_6px_0_#2ec6ee] transition-all duration-300 ${toast ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0"}`}
       >
-        <span className="min-w-0 flex-1">{toast?.msg}</span>
-        {toast?.cart && (
-          <button
-            type="button"
-            onClick={() => {
-              setToast(null);
-              setOpen(true);
-            }}
-            className="min-h-[44px] rounded-full border-[3px] border-brand bg-brand px-4 font-bold text-ink"
-          >
-            Ver carrito
-          </button>
-        )}
+        {toast}
       </div>
     </section>
   );
@@ -160,7 +130,7 @@ function ProductCard({ p, onToast }: { p: Producto; onToast: (m: string) => void
   const groupName = `opcion-${p.id}`;
   const etiqueta = p.etiqueta ?? "Talla";
 
-  const pedir = async () => {
+  const pedir = () => {
     if (p.opciones && !talla) {
       setError(true);
       blip(220);
@@ -169,18 +139,9 @@ function ProductCard({ p, onToast }: { p: Producto; onToast: (m: string) => void
     const opc = talla ? ` (${etiqueta.toLowerCase()} ${talla})` : "";
     const costo = p.precio != null ? ` — ${money(p.precio, p.moneda ?? "MXN")}` : "";
     const msg = `Hola ELDEBHOR, quiero: ${p.nombre}${opc}${costo}. ¿Está disponible?`;
-    // start the copy and open Instagram inside the same click (popup blockers)
-    const copying = navigator.clipboard?.writeText(msg);
-    window.open(igDM, "_blank", "noopener,noreferrer");
+    window.open(waLink(msg), "_blank", "noopener,noreferrer");
     slap(0.4);
-    let copied = false;
-    try {
-      await copying;
-      copied = !!copying;
-    } catch {
-      copied = false;
-    }
-    onToast(copied ? `Mensaje copiado: pégalo en el chat de Instagram. «${msg}»` : `Escríbenos en Instagram: «${msg}»`);
+    onToast(`Abriendo WhatsApp con tu pedido: «${msg}»`);
   };
 
   return (
@@ -262,157 +223,16 @@ function ProductCard({ p, onToast }: { p: Producto; onToast: (m: string) => void
             type="button"
             onClick={pedir}
             disabled={p.agotado}
-            data-cursor={p.agotado ? "NOPE" : "DM"}
+            data-cursor={p.agotado ? "NOPE" : "WHATSAPP"}
             className="inline-flex min-h-[52px] items-center justify-center gap-2 border-4 border-black bg-brand px-5 font-block text-base text-ink shadow-[5px_5px_0_#000] transition-transform hover:-rotate-1 hover:scale-[1.02] active:translate-x-1 active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:bg-[#d8d4c8] disabled:text-ink/70 disabled:shadow-none"
           >
             {p.agotado ? (
               "Agotado"
             ) : (
               <>
-                <IgIcon /> Pedir por DM
+                <WaIcon /> Pedir por WhatsApp
               </>
             )}
-          </button>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-const DEFAULT_OPTION = (o: { values: string[] }) => o.values.length === 1 && o.values[0] === "Default Title";
-
-/** Tarjeta de un producto que viene de Shopify: opciones, precio y disponibilidad reales. */
-function ShopCard({ p, onAdded }: { p: ShopProduct; onAdded: (m: string) => void }) {
-  const { add, busy } = useCart();
-  const opts = p.options.filter((o) => !DEFAULT_OPTION(o));
-  const [sel, setSel] = useState<Record<string, string>>({});
-  const [error, setError] = useState("");
-
-  const variant =
-    opts.length === 0
-      ? p.variants[0]
-      : p.variants.find((v) => opts.every((o) => v.options.some((x) => x.name === o.name && x.value === sel[o.name])));
-  const missing = opts.filter((o) => !sel[o.name]).map((o) => o.name.toLowerCase());
-  const soldOut = !p.available || (variant ? !variant.available : false);
-
-  // un valor "se agota" si ninguna variante disponible lo combina con lo ya elegido
-  const valueAvailable = (name: string, value: string) =>
-    p.variants.some(
-      (v) =>
-        v.available &&
-        v.options.some((x) => x.name === name && x.value === value) &&
-        opts.every((o) => o.name === name || !sel[o.name] || v.options.some((x) => x.name === o.name && x.value === sel[o.name])),
-    );
-
-  const prices = p.variants.map((v) => v.price);
-  const min = Math.min(...prices);
-  const from = !variant && Math.max(...prices) > min;
-  const price = variant ? variant.price : min;
-  const img = variant?.image ?? p.images[0] ?? null;
-
-  const addToCart = async () => {
-    if (!variant) {
-      setError(`Elige ${missing.join(" y ")} antes de agregar.`);
-      blip(220);
-      return;
-    }
-    if (!variant.available) return;
-    const cart = await add(variant.id, 1);
-    if (cart) {
-      slap(0.4);
-      const detail = variant.title !== "Default Title" ? ` (${variant.title})` : "";
-      onAdded(`${p.title}${detail} agregado al carrito.`);
-    }
-  };
-
-  return (
-    <article className="group relative" aria-labelledby={`${p.handle}-name`}>
-      <svg viewBox="0 0 40 46" className="relative z-10 mx-auto -mb-2 h-12 w-10" aria-hidden="true">
-        <path d="M20 44 V22 C20 10 34 10 34 20 C34 28 26 28 26 24" fill="none" stroke="#0b0b0b" strokeWidth="5" strokeLinecap="round" />
-      </svg>
-      <div className="relative border-4 border-black bg-white shadow-[8px_8px_0_#121110] transition-transform duration-300 group-hover:-rotate-1">
-        <div className="relative aspect-square overflow-hidden border-b-4 border-black bg-[#f4f1ea]">
-          {img ? (
-            <Image
-              src={img.url}
-              alt={img.alt || p.title}
-              fill
-              sizes="(min-width:1024px) 30vw, (min-width:640px) 45vw, 90vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transform-none"
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center p-6 text-center font-marker text-3xl text-ink/60">{p.title}</div>
-          )}
-          {soldOut && (
-            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-12 border-4 border-[#e3122b] bg-white/90 px-4 py-1 font-block text-3xl text-[#c10f24]">
-              Agotado
-            </span>
-          )}
-        </div>
-        <p className="absolute -right-3 -top-3 rotate-6 border-4 border-black bg-bubble px-3 py-1 font-block text-lg text-ink shadow-[4px_4px_0_#000]">
-          <span className="sr-only">Precio: </span>
-          {from ? "Desde " : ""}
-          {money(price, p.currency)}
-        </p>
-
-        <div className="flex flex-col gap-4 p-5">
-          <div>
-            <h3 id={`${p.handle}-name`} className="font-marker text-2xl leading-tight">
-              {p.title}
-            </h3>
-            {p.description && <p className="mt-1 line-clamp-4 text-base text-ink/80">{p.description}</p>}
-            {variant?.compareAt && variant.compareAt > variant.price && (
-              <p className="mt-1 text-base text-ink/70">
-                Antes <s>{money(variant.compareAt, p.currency)}</s>
-              </p>
-            )}
-          </div>
-
-          {opts.map((o) => (
-            <fieldset key={o.name} aria-describedby={error ? `${p.handle}-err` : undefined}>
-              <legend className="mb-2 text-base font-bold">{o.name}</legend>
-              <div className="flex flex-wrap gap-2">
-                {o.values.map((val) => {
-                  const ok = valueAvailable(o.name, val);
-                  return (
-                    <label
-                      key={val}
-                      className={`flex h-11 min-w-11 cursor-pointer items-center justify-center rounded-md border-[3px] border-black px-3 font-bold has-[:focus-visible]:outline has-[:focus-visible]:outline-[3px] has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink ${sel[o.name] === val ? "bg-ink text-bone" : "bg-white text-ink"} ${ok ? "" : "line-through opacity-60"}`}
-                    >
-                      <input
-                        type="radio"
-                        name={`${p.handle}-${o.name}`}
-                        value={val}
-                        checked={sel[o.name] === val}
-                        onChange={() => {
-                          setSel((s) => ({ ...s, [o.name]: val }));
-                          setError("");
-                          blip(600);
-                        }}
-                        className="sr-only"
-                      />
-                      {val}
-                      {!ok && <span className="sr-only"> (agotado)</span>}
-                    </label>
-                  );
-                })}
-              </div>
-            </fieldset>
-          ))}
-          {error && (
-            <p id={`${p.handle}-err`} className="font-bold text-[#b00020]" role="alert">
-              ⚠ {error}
-            </p>
-          )}
-
-          <button
-            type="button"
-            onClick={addToCart}
-            disabled={soldOut || busy}
-            data-cursor={soldOut ? "NOPE" : "AGREGAR"}
-            className="inline-flex min-h-[52px] items-center justify-center gap-2 border-4 border-black bg-brand px-5 font-block text-base text-ink shadow-[5px_5px_0_#000] transition-transform hover:-rotate-1 hover:scale-[1.02] active:translate-x-1 active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:bg-[#d8d4c8] disabled:text-ink/70 disabled:shadow-none"
-          >
-            {soldOut ? "Agotado" : busy ? "Agregando…" : "Agregar al carrito"}
           </button>
         </div>
       </div>
@@ -426,6 +246,14 @@ function IgIcon() {
       <rect x="3" y="3" width="18" height="18" rx="5" />
       <circle cx="12" cy="12" r="4.2" />
       <circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function WaIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+      <path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.9L2 22l5.25-1.38A9.9 9.9 0 1 0 12.04 2Zm0 1.8a8.1 8.1 0 1 1-4.13 15.07l-.3-.17-3.1.82.83-3.02-.2-.31A8.1 8.1 0 0 1 12.04 3.8Zm-3.2 3.9c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5s1.07 2.9 1.22 3.1c.15.2 2.1 3.35 5.2 4.56 2.57 1.01 3.1.8 3.65.75.56-.05 1.8-.74 2.05-1.45.25-.7.25-1.32.18-1.45-.08-.12-.28-.2-.58-.35-.3-.15-1.8-.89-2.07-.99-.28-.1-.48-.15-.68.15-.2.3-.78.99-.96 1.19-.17.2-.35.23-.65.08-.3-.15-1.28-.47-2.43-1.5-.9-.8-1.5-1.8-1.68-2.1-.17-.3-.02-.46.13-.6.14-.13.3-.35.45-.53.15-.17.2-.3.3-.5.1-.2.05-.38-.02-.53-.08-.15-.68-1.65-.93-2.25-.24-.58-.49-.5-.68-.51h-.58Z" />
     </svg>
   );
 }
