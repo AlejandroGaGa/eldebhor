@@ -5,7 +5,8 @@ import { useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { MERCH, type Producto } from "@/data/merch";
+import type { Producto } from "@/data/merch";
+import { descuento, fechaLarga, ofertaValida, type Promo } from "@/lib/offers";
 import { igProfile, INSTAGRAM, waLink } from "@/data/site";
 import { blip, slap } from "@/lib/audio";
 import ProductArt from "./ProductArt";
@@ -14,7 +15,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const money = (n: number, cur: string) => `$${n.toLocaleString("es-MX")} ${cur}`;
 
-export default function Merch() {
+export default function Merch({ products, promo }: { products: Producto[]; promo: Promo | null }) {
   const root = useRef<HTMLElement>(null);
   const [toast, setToast] = useState("");
   const toastTimer = useRef<number>(0);
@@ -65,7 +66,7 @@ export default function Merch() {
         <div className="flex w-max animate-[marquee_18s_linear_infinite] whitespace-nowrap font-block text-xl text-brand motion-reduce:animate-none sm:text-2xl">
           {Array.from({ length: 8 }, (_, i) => (
             <span key={i} className="pr-6">
-              DROP 001 ✦ HECHO A MANO ✦ PIDE POR WHATSAPP ✦ EDICIÓN LIMITADA ✦
+              {promo ? `OFERTA ✦ ${promo.texto.toUpperCase()} ✦ PIDE POR WHATSAPP ✦` : "DROP 001 ✦ HECHO A MANO ✦ PIDE POR WHATSAPP ✦ EDICIÓN LIMITADA ✦"}
             </span>
           ))}
         </div>
@@ -87,6 +88,13 @@ export default function Merch() {
               Todo se pide por WhatsApp. Elige tu pieza, toca <strong>Pedir por WhatsApp</strong> y se abre el chat con tu pedido ya escrito.
             </p>
             <p className="mt-3 max-w-xl -rotate-1 font-marker text-xl">Cada compra es una comida que ya no sale de 20 varos.</p>
+            {promo && (
+              <div className="mt-6 max-w-xl rotate-1 border-4 border-black bg-bubble px-5 py-4 text-white shadow-[6px_6px_0_#121110]" role="note">
+                <p className="font-mono text-sm font-bold uppercase tracking-[0.25em]">✦ Oferta</p>
+                <p className="mt-1 font-block text-2xl leading-tight sm:text-3xl">{promo.texto}</p>
+                {promo.hasta && <p className="mt-1 text-base font-bold">Hasta el {fechaLarga(promo.hasta)}</p>}
+              </div>
+            )}
           </div>
           <a
             href={igProfile}
@@ -104,12 +112,13 @@ export default function Merch() {
         <div className="relative mt-14">
           <div className="absolute inset-x-0 top-0 hidden h-4 rounded-full border-4 border-black bg-[linear-gradient(180deg,#f2f2f2,#8d8d8d)] lg:block" aria-hidden="true" />
           <ul className="grid grid-cols-1 gap-x-8 gap-y-14 pt-2 sm:grid-cols-2 lg:grid-cols-3">
-            {MERCH.map((p) => (
+            {products.map((p) => (
               <li key={p.id} data-hang>
                 <ProductCard p={p} onToast={say} />
               </li>
             ))}
           </ul>
+          {products.length === 0 && <p className="py-10 font-marker text-2xl">Pronto hay piezas nuevas. Escríbenos por WhatsApp.</p>}
         </div>
       </div>
 
@@ -128,6 +137,7 @@ function ProductCard({ p, onToast }: { p: Producto; onToast: (m: string) => void
   const [talla, setTalla] = useState<string>("");
   const [error, setError] = useState(false);
   const groupName = `opcion-${p.id}`;
+  const enOferta = ofertaValida(p);
   const etiqueta = p.etiqueta ?? "Talla";
 
   const pedir = () => {
@@ -137,7 +147,8 @@ function ProductCard({ p, onToast }: { p: Producto; onToast: (m: string) => void
       return;
     }
     const opc = talla ? ` (${etiqueta.toLowerCase()} ${talla})` : "";
-    const costo = p.precio != null ? ` — ${money(p.precio, p.moneda ?? "MXN")}` : "";
+    const cur = p.moneda ?? "MXN";
+    const costo = enOferta && p.oferta && p.precio != null ? ` — ${money(p.oferta.precio, cur)} (oferta, antes ${money(p.precio, cur)})` : p.precio != null ? ` — ${money(p.precio, cur)}` : "";
     const msg = `Hola ELDEBHOR, quiero: ${p.nombre}${opc}${costo}. ¿Está disponible?`;
     window.open(waLink(msg), "_blank", "noopener,noreferrer");
     slap(0.4);
@@ -158,6 +169,7 @@ function ProductCard({ p, onToast }: { p: Producto; onToast: (m: string) => void
                 alt={p.alt ?? p.nombre}
                 fill
                 sizes="(min-width:1024px) 30vw, (min-width:640px) 45vw, 90vw"
+                unoptimized={p.imagen.startsWith("/api/img/")}
                 className="object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transform-none"
               />
             ) : (
@@ -166,6 +178,11 @@ function ProductCard({ p, onToast }: { p: Producto; onToast: (m: string) => void
               </div>
             )}
           {!p.imagen && <span className="absolute bottom-2 left-2 rounded-sm bg-ink/85 px-1.5 py-0.5 font-mono text-[11px] text-bone">imagen de ejemplo</span>}
+          {enOferta && !p.agotado && (
+            <span className="absolute left-2 top-2 -rotate-3 border-4 border-black bg-[#c10f24] px-3 py-1 font-block text-lg text-white shadow-[3px_3px_0_#000]">
+              Oferta −{descuento(p)}%
+            </span>
+          )}
           {p.agotado && (
             <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-12 border-4 border-[#e3122b] bg-white/90 px-4 py-1 font-block text-3xl text-[#c10f24]">
               Agotado
@@ -174,8 +191,20 @@ function ProductCard({ p, onToast }: { p: Producto; onToast: (m: string) => void
         </div>
         {/* price tag */}
         <p className="absolute -right-3 -top-3 rotate-6 border-4 border-black bg-bubble px-3 py-1 font-block text-lg text-ink shadow-[4px_4px_0_#000]">
-          <span className="sr-only">Precio: </span>
-          {p.precio != null ? money(p.precio, p.moneda ?? "MXN") : "Consultar"}
+          {enOferta && p.oferta && p.precio != null ? (
+            <>
+              <span className="sr-only">Precio de oferta: {money(p.oferta.precio, p.moneda ?? "MXN")}. Precio normal: {money(p.precio, p.moneda ?? "MXN")}.</span>
+              <span aria-hidden="true" className="flex flex-col items-end leading-none">
+                <s className="text-sm font-bold opacity-80">{money(p.precio, p.moneda ?? "MXN")}</s>
+                <span>{money(p.oferta.precio, p.moneda ?? "MXN")}</span>
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="sr-only">Precio: </span>
+              {p.precio != null ? money(p.precio, p.moneda ?? "MXN") : "Consultar"}
+            </>
+          )}
         </p>
 
         <div className="flex flex-col gap-4 p-5">

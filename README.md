@@ -64,3 +64,30 @@ O con la CLI: `npx vercel` (preview) y `npx vercel --prod`.
 
 Cada producto de `src/data/merch.ts` tiene el botón **Pedir por WhatsApp**: abre el chat con el pedido ya escrito
 (producto, talla y precio). El número está en `WHATSAPP` dentro de `src/data/site.ts` (formato `52` + 10 dígitos).
+
+## Panel de administración (/admin)
+
+Desde `/admin` se editan los productos (nombre, descripción, precio, tallas, foto, agotado, ocultar, orden), se
+ponen **ofertas por producto** (precio rebajado o porcentaje, con fecha de fin opcional que se quita sola) y una
+**franja de oferta general** del sitio. Los cambios se ven en la página al guardar.
+
+**Poner en marcha (local)**
+
+1. Copia `.env.example` a `.env.local` y llena `ADMIN_EMAIL`, `ADMIN_PASSWORD` y `ADMIN_SECRET`.
+2. `npm run dev` y entra a `http://localhost:3000/admin`.
+3. En local los datos viven en `.data/db.json` (no se sube a git).
+
+**Dar acceso a otra persona**: entra como dueño → pestaña **Accesos** → correo + contraseña de al menos 10
+caracteres. Esa persona puede editar productos y ofertas, pero no dar ni quitar accesos; puede cambiar su
+contraseña en su pestaña. Quitar el acceso cierra su sesión al instante.
+
+**En producción (Vercel)** el disco es de solo lectura, así que hace falta una base de datos:
+
+1. Crea una base en [Upstash](https://upstash.com) (Redis, plan gratis) y copia `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN`.
+2. En Vercel → Settings → Environment Variables agrega esas dos y también `ADMIN_EMAIL`, `ADMIN_PASSWORD` y `ADMIN_SECRET`.
+3. Redeploy. Sin Upstash el panel avisa que no puede guardar.
+
+**Seguridad**: contraseñas con scrypt + sal; sesión en cookie `httpOnly` firmada (8 h); bloqueo de 15 min tras
+5 intentos fallidos; las acciones exigen mismo origen; las fotos se reducen en el navegador (JPG ≤ 900 px) y se
+guardan en la misma base. Los productos que nunca se han editado salen de `src/data/merch.ts`; al guardar el
+primero, todo el catálogo pasa a la base de datos y desde ahí se administra solo en el panel.

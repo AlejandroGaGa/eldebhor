@@ -22,12 +22,14 @@ import Merch from "./Merch";
 import StickerBomb from "./StickerBomb";
 import FreeWall from "./FreeWall";
 import Footer from "./Footer";
+import type { Producto } from "@/data/merch";
+import type { Promo } from "@/lib/offers";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
 
-export default function Experience() {
+export default function Experience({ products, promo }: { products: Producto[]; promo: Promo | null }) {
   const entered = useStore((s) => s.entered);
 
   // Smooth scroll, synced with GSAP's ticker
@@ -112,7 +114,7 @@ export default function Experience() {
         <Gallery />
         <CanLab />
         <StickerBomb />
-        <Merch />
+        <Merch products={products} promo={promo} />
         <FreeWall />
         <Footer />
       </main>
