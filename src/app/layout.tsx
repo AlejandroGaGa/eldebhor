@@ -37,9 +37,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
+      suppressHydrationWarning
       className={`${tag.variable} ${block.variable} ${marker.variable} ${wet.variable} ${spray.variable} ${mono.variable} antialiased`}
     >
-      <body>{children}</body>
+      <body>
+        {/* si ya eligió sonido antes, se marca el <html> antes del primer pintado para no mostrar la pantalla de carga */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(/(?:^|; )eldebhor_sonido=(si|no)/.test(document.cookie))document.documentElement.setAttribute("data-vuelta","1")}catch(e){}`,
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

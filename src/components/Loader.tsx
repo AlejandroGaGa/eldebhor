@@ -3,9 +3,10 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { store } from "@/lib/store";
+import { store, useStore } from "@/lib/store";
 import { rattle, unlockAudio } from "@/lib/audio";
 import { PALETTE } from "@/lib/palette";
+import { readPref, savePref, SOUND_COOKIE } from "@/lib/prefs";
 import SprayCanIcon from "./SprayCanIcon";
 
 const WORDS = ["CLACK", "CLACK!", "SHAKE", "TSSS", "CLAK", "PSSHH"];
@@ -14,6 +15,8 @@ export default function Loader() {
   const [gone, setGone] = useState(false);
   const [pct, setPct] = useState(0);
   const [ready, setReady] = useState(false);
+  const [manual, setManual] = useState(false); // eligió aquí (no venía con la cookie)
+  const entered = useStore((s) => s.entered);
   const root = useRef<HTMLDivElement>(null);
   const can = useRef<HTMLDivElement>(null);
   const pops = useRef<HTMLDivElement>(null);
@@ -22,6 +25,7 @@ export default function Loader() {
 
   // fake-ish progress that also waits for fonts
   useEffect(() => {
+    if (readPref(SOUND_COOKIE)) return; // ya eligió antes: no hay carga que mostrar
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const state = { p: 0 };
     let fontsDone = false;
@@ -61,6 +65,8 @@ export default function Loader() {
   }, [ready]);
 
   function enter(sound: boolean) {
+    setManual(true);
+    savePref(SOUND_COOKIE, sound ? "si" : "no");
     unlockAudio();
     store.set({ sound });
     rattle(8, 0.7);
@@ -83,11 +89,12 @@ export default function Loader() {
       .to(bars, { xPercent: 130, duration: 0.6, stagger: 0.06, ease: "power3.out" }, "+=0.05");
   }
 
-  if (gone) return null;
+  if (gone || (entered && !manual)) return null;
 
   return (
     <div
       ref={root}
+      data-loader-root
       role="dialog"
       aria-modal="true"
       aria-labelledby="loader-title"
@@ -140,6 +147,7 @@ export default function Loader() {
         <p className="max-w-sm text-center text-sm text-bone/80">
           Experiencia interactiva hecha con 20 varos. Mejor con audífonos y con el mouse en la mano.
         </p>
+        <p className="max-w-sm text-center text-xs text-bone/70">Recordamos tu elección con una cookie (solo guarda si quieres sonido o no) para no volver a preguntarte.</p>
       </div>
       <div ref={stripes} className="pointer-events-none absolute inset-0 opacity-0" aria-hidden="true">
         {PALETTE.slice(0, 6).map((p, i) => (

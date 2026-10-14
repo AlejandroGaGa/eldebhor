@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { store, useStore } from "@/lib/store";
 import { blip, sprayOff, unlockAudio } from "@/lib/audio";
 import { scrollToTop } from "@/lib/scroll";
+import { savePref, SOUND_COOKIE } from "@/lib/prefs";
 
 export default function Hud() {
   const entered = useStore((s) => s.entered);
@@ -36,6 +37,7 @@ export default function Hud() {
     unlockAudio();
     const next = !store.get().sound;
     store.set({ sound: next });
+    savePref(SOUND_COOKIE, next ? "si" : "no");
     if (!next) sprayOff();
     else blip(990);
   };

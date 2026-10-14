@@ -303,3 +303,8 @@ html.chaos .tag-l {
     -webkit-text-stroke: 0;
   }
 }
+
+/* visitante que ya eligió sonido: sin pantalla de carga */
+html[data-vuelta] [data-loader-root] {
+  display: none !important;
+}

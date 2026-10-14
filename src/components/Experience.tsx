@@ -7,7 +7,8 @@ import { useGSAP } from "@gsap/react";
 import Lenis from "lenis";
 import { setLenis } from "@/lib/scroll";
 import { store, useStore } from "@/lib/store";
-import { blip } from "@/lib/audio";
+import { blip, unlockAudio } from "@/lib/audio";
+import { readPref, SOUND_COOKIE } from "@/lib/prefs";
 import Loader from "./Loader";
 import Cursor from "./Cursor";
 import Hud from "./Hud";
@@ -52,6 +53,26 @@ export default function Experience({ products, promo }: { products: Producto[]; 
       lenis.destroy();
       setLenis(null);
     };
+  }, []);
+
+  // Visitante que ya eligió sonido: entra directo. El navegador no deja sonar nada hasta el primer toque o tecla,
+  // así que se desbloquea el audio en ese primer gesto.
+  useEffect(() => {
+    const pref = readPref(SOUND_COOKIE);
+    if (pref !== "si" && pref !== "no") return;
+    const sound = pref === "si";
+    store.set({ sound, entered: true });
+    if (!sound) return;
+    const events = ["pointerdown", "keydown", "touchend"] as const;
+    function off() {
+      events.forEach((e) => window.removeEventListener(e, unlock));
+    }
+    function unlock() {
+      unlockAudio();
+      off();
+    }
+    events.forEach((e) => window.addEventListener(e, unlock, { passive: true }));
+    return off;
   }, []);
 
   // Custom cursor class (only for fine pointers; CSS guards the rest)

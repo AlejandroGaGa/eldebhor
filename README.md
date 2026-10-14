@@ -92,3 +92,13 @@ contraseña en su pestaña. Quitar el acceso cierra su sesión al instante.
 5 intentos fallidos; las acciones exigen mismo origen; las fotos se reducen en el navegador (JPG ≤ 900 px) y se
 guardan en la misma base. Los productos que nunca se han editado salen de `src/data/merch.ts`; al guardar el
 primero, todo el catálogo pasa a la base de datos y desde ahí se administra solo en el panel.
+
+## Cookies
+
+El sitio solo usa dos cookies de preferencia (1 año, sin rastreo ni terceros), definidas en `src/lib/prefs.ts`:
+
+- `eldebhor_sonido` (`si`/`no`): recuerda si el visitante eligió sonido. Quien ya eligió entra directo, sin pantalla de carga.
+  Si eligió sonido, el audio se activa en su primer toque o tecla (el navegador no permite sonar antes).
+- `eldebhor_reproductor` (`min`/`max`): recuerda si dejó el reproductor minimizado.
+
+El panel `/admin` usa además una cookie de sesión (`eldebhor_admin`, solo para quien administra).
