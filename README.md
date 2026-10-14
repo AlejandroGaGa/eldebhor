@@ -85,6 +85,7 @@ contraseña en su pestaña. Quitar el acceso cierra su sesión al instante.
 
 1. Crea una base en [Upstash](https://upstash.com) (Redis, plan gratis) y copia `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN`.
 2. En Vercel → Settings → Environment Variables agrega esas dos y también `ADMIN_EMAIL`, `ADMIN_PASSWORD` y `ADMIN_SECRET`.
+   (Si conectas la base desde Vercel → Storage → Upstash, Vercel crea `KV_REST_API_URL` y `KV_REST_API_TOKEN`; el panel acepta esos nombres también.)
 3. Redeploy. Sin Upstash el panel avisa que no puede guardar.
 
 **Seguridad**: contraseñas con scrypt + sal; sesión en cookie `httpOnly` firmada (8 h); bloqueo de 15 min tras
