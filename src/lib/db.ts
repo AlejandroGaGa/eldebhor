@@ -10,9 +10,14 @@ import path from "node:path";
  */
 export type Storage = "upstash" | "file" | "none";
 
-// La integración de Upstash en Vercel crea KV_REST_API_*; en el panel de Upstash se llaman UPSTASH_REDIS_REST_*. Valen las dos.
-const URL_ = (process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL)?.trim().replace(/\/+$/, "");
-const TOKEN = (process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN)?.trim();
+// Upstash se llama UPSTASH_REDIS_REST_* en su panel, pero la integración de Vercel crea KV_REST_API_* y a veces con un
+// prefijo propio (p. ej. STORAGE_KV_REST_API_URL). Se acepta cualquiera de esos nombres.
+const findEnv = (re: RegExp) => {
+  const key = Object.keys(process.env).find((k) => re.test(k) && process.env[k]?.trim());
+  return key ? process.env[key]?.trim() : undefined;
+};
+const URL_ = findEnv(/(^|_)(UPSTASH_REDIS_REST_URL|KV_REST_API_URL)$/)?.replace(/\/+$/, "");
+const TOKEN = findEnv(/(^|_)(UPSTASH_REDIS_REST_TOKEN|KV_REST_API_TOKEN)$/);
 export const storage: Storage = URL_ && TOKEN ? "upstash" : process.env.VERCEL ? "none" : "file";
 
 export class StorageError extends Error {}
