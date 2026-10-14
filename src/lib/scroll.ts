@@ -14,6 +14,22 @@ export function scrollToTop() {
   else window.scrollTo({ top: 0, behavior: "auto" });
 }
 
+/** Salta a una sección por su id (con Lenis si hay; si no, salto nativo) y corrige si el layout se movió al llegar. */
+export function scrollToId(id: string) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (!lenis) {
+    el.scrollIntoView({ behavior: "auto", block: "start" });
+    return;
+  }
+  const fix = () => {
+    // fotos que cargan tarde pueden mover la sección: se reajusta una vez al llegar
+    const top = el.getBoundingClientRect().top;
+    if (Math.abs(top) > 12) lenis?.scrollTo(el, { immediate: true });
+  };
+  lenis.scrollTo(el, { duration: 1.4, onComplete: fix });
+}
+
 export function useReducedMotion() {
   const [reduced, setReduced] = useState(false);
   useEffect(() => {

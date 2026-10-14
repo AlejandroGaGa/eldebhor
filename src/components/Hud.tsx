@@ -6,7 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { store, useStore } from "@/lib/store";
 import { blip, sprayOff, unlockAudio } from "@/lib/audio";
-import { scrollToTop } from "@/lib/scroll";
+import { scrollToId, scrollToTop } from "@/lib/scroll";
 import { savePref, SOUND_COOKIE } from "@/lib/prefs";
 
 export default function Hud() {
@@ -63,9 +63,27 @@ export default function Hud() {
               Merch
             </a>
           </nav>
+          {/* atajo directo al merch en celular (en pantallas grandes ya está en la barra) */}
+          <a
+            href="#merch"
+            onClick={(e) => {
+              e.preventDefault();
+              blip(880);
+              scrollToId("merch");
+            }}
+            data-cursor="MERCH"
+            className="flex min-h-[48px] items-center gap-2 whitespace-nowrap rounded-full border-2 border-black bg-taxi px-4 text-sm font-bold text-ink shadow-[3px_3px_0_#000] md:hidden"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M5 8h14l-1 12H6L5 8Z" />
+              <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+            </svg>
+            Merch
+            <span className="sr-only"> (ir directo a la tienda)</span>
+          </a>
           <p className="flex min-h-[48px] items-center gap-2 whitespace-nowrap rounded-full bg-ink/80 px-3 text-sm text-bone backdrop-blur-sm" aria-live="polite">
             <span className="h-5 w-5 rounded-full border-2 border-bone" style={{ background: color }} aria-hidden="true" />
-            <span className="hidden sm:inline">Lata:</span> <span className="font-bold">{colorName}</span>
+            <span className="hidden min-[680px]:inline">Lata:</span> <span className="font-bold max-[559px]:sr-only">{colorName}</span>
           </p>
           <button
             type="button"
@@ -76,7 +94,7 @@ export default function Hud() {
             className="flex min-h-[48px] min-w-[48px] items-center justify-center gap-2 rounded-full bg-ink/80 px-3 text-sm text-bone backdrop-blur-sm"
           >
             <SoundBars on={sound} />
-            <span className="hidden whitespace-nowrap min-[400px]:inline">{sound ? "Sonido sí" : "Sonido no"}</span>
+            <span className="hidden whitespace-nowrap min-[560px]:inline">{sound ? "Sonido sí" : "Sonido no"}</span>
           </button>
         </div>
       </div>
