@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/seo";
 
 // Self-hosted (OFL) fonts: no build-time requests to Google, works anywhere.
 const tag = localFont({ src: "../fonts/sedgwick-ave-display-latin-400-normal.woff2", variable: "--ff-tag", display: "swap" });
@@ -18,14 +19,24 @@ const mono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "ELDEBHOR — hoy como con 20 varos",
-  description:
-    "Hoy voy a comer con estos 20 varos, porque todo mi dinero me lo gasté pintando y poniéndome bien pedote. Graffiti, obras y merch de ELDEBHOR.",
+  metadataBase: new URL(SITE_URL),
+  title: { default: SITE_TITLE, template: "%s | ELDEBHOR" },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  keywords: ["graffiti", "arte urbano", "street art", "merch graffiti", "playeras graffiti", "grinders", "ELDEBHOR", "México"],
+  authors: [{ name: "ELDEBHOR" }],
+  creator: "Alejandro García Gallardo",
+  alternates: { canonical: "/" },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
   openGraph: {
-    title: "ELDEBHOR — hoy como con 20 varos",
-    description: "Todo el varo se fue en latas. La pared es tuya.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: "/",
+    siteName: SITE_NAME,
+    locale: "es_MX",
     type: "website",
   },
+  twitter: { card: "summary_large_image", title: SITE_TITLE, description: SITE_DESCRIPTION },
 };
 
 export const viewport: Viewport = {

@@ -104,3 +104,10 @@ El sitio solo usa dos cookies de preferencia (1 año, sin rastreo ni terceros), 
 - `eldebhor_reproductor` (`min`/`max`): recuerda si dejó el reproductor minimizado.
 
 El panel `/estudio` usa además una cookie de sesión (`eldebhor_admin`, solo para quien administra).
+
+## SEO e indexación en Google
+
+- Define `NEXT_PUBLIC_SITE_URL` en Vercel (Settings → Environment Variables) con tu dominio final, p. ej. `https://eldebhor.com`, y vuelve a desplegar. De ahí salen el canonical, Open Graph, `sitemap.xml` y `robots.txt`.
+- Se generan solos: `/sitemap.xml`, `/robots.txt`, `/manifest.webmanifest`, datos estructurados (JSON-LD de marca, sitio y productos) y la imagen para compartir (`opengraph-image.png`).
+- `/estudio` y `/api/estudio` quedan fuera del índice (`noindex` + `robots.txt`).
+- Para pedir la indexación: Google Search Console → agregar propiedad → verificar → enviar `https://tu-dominio/sitemap.xml` → «Inspección de URLs» → «Solicitar indexación».
