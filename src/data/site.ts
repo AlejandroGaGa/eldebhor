@@ -7,6 +7,11 @@ export const INSTAGRAM = "eldhebor";
 
 export const igProfile = `https://instagram.com/${INSTAGRAM}`;
 
+/** Crédito del desarrollador (perfil personal). */
+export const DEV_NAME = "Alejandro García Gallardo";
+export const DEV_INSTAGRAM = "gagaeldev";
+export const devProfile = `https://instagram.com/${DEV_INSTAGRAM}`;
+
 /** Número donde llegan los pedidos (solo dígitos, con 52 de México). */
 export const WHATSAPP = "524775885719";
 /** Chat de WhatsApp con el mensaje ya escrito. */

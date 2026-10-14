@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { scrollToTop } from "@/lib/scroll";
 import { useStore } from "@/lib/store";
+import { DEV_INSTAGRAM, DEV_NAME, devProfile } from "@/data/site";
 import SplitWords from "./SplitWords";
 
 export default function Footer() {
@@ -62,6 +63,19 @@ export default function Footer() {
           Volver a la pared ↑
         </button>
       </div>
+
+      <p className="mx-auto mt-8 max-w-6xl border-t border-bone/20 pt-4 text-center text-sm text-bone/80">
+        Desarrollador por {DEV_NAME} ·{" "}
+        <a
+          href={devProfile}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex min-h-[44px] items-center font-bold text-brand underline underline-offset-4"
+        >
+          @{DEV_INSTAGRAM}
+          <span className="sr-only"> (abre Instagram en otra pestaña)</span>
+        </a>
+      </p>
     </footer>
   );
 }
