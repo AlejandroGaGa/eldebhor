@@ -65,7 +65,7 @@ export default function Footer() {
       </div>
 
       <p className="mx-auto mt-8 max-w-6xl border-t border-bone/20 pt-4 text-center text-sm text-bone/80">
-        Desarrollador por {DEV_NAME} ·{" "}
+        Desarrollado por {DEV_NAME} ·{" "}
         <a
           href={devProfile}
           target="_blank"
