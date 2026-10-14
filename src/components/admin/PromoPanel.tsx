@@ -11,7 +11,7 @@ export default function PromoPanel() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    api<{ promo: Promo }>("/api/admin/promo")
+    api<{ promo: Promo }>("/api/estudio/promo")
       .then((r) => setPromo(r.promo))
       .catch((e) => setError((e as Error).message));
   }, []);
@@ -23,7 +23,7 @@ export default function PromoPanel() {
     setError("");
     setSaved(false);
     try {
-      const r = await api<{ promo: Promo }>("/api/admin/promo", { json: promo });
+      const r = await api<{ promo: Promo }>("/api/estudio/promo", { json: promo });
       setPromo(r.promo);
       setSaved(true);
     } catch (err) {

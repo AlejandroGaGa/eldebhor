@@ -73,7 +73,7 @@ export default function ProductEditor({ producto, onCancel, onSaved, onDeleted }
     setError("");
     try {
       const blob = await fotoAJpg(file);
-      const r = await api<{ url: string }>("/api/admin/image", { raw: blob });
+      const r = await api<{ url: string }>("/api/estudio/image", { raw: blob });
       setImagen(r.url);
       if (!alt) setAlt(nombre);
     } catch (e) {
@@ -105,7 +105,7 @@ export default function ProductEditor({ producto, onCancel, onSaved, onDeleted }
     };
     setBusy(true);
     try {
-      const r = await api<{ productos: Producto[] }>("/api/admin/products", { json: { action: "save", producto: body } });
+      const r = await api<{ productos: Producto[] }>("/api/estudio/products", { json: { action: "save", producto: body } });
       onSaved(r.productos, nombre);
     } catch (err) {
       setError((err as Error).message);
@@ -118,7 +118,7 @@ export default function ProductEditor({ producto, onCancel, onSaved, onDeleted }
     setBusy(true);
     setError("");
     try {
-      const r = await api<{ productos: Producto[] }>("/api/admin/products", { json: { action: "delete", id: p.id } });
+      const r = await api<{ productos: Producto[] }>("/api/estudio/products", { json: { action: "delete", id: p.id } });
       onDeleted(r.productos, p.nombre);
     } catch (err) {
       setError((err as Error).message);

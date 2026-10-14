@@ -17,7 +17,7 @@ export default function AdminApp() {
 
   useEffect(() => {
     let live = true;
-    api<Me>("/api/admin/session")
+    api<Me>("/api/estudio/session")
       .then((m) => {
         if (!live) return;
         setMe(m);
@@ -89,7 +89,7 @@ function Login({ onDone }: { onDone: () => void }) {
     setBusy(true);
     setError("");
     try {
-      await api("/api/admin/login", { json: { email, password } });
+      await api("/api/estudio/login", { json: { email, password } });
       onDone();
     } catch (err) {
       setError((err as Error).message);
@@ -136,7 +136,7 @@ function Panel({ me, onLogout }: { me: Me & { user: NonNullable<Me["user"]> }; o
   ];
 
   const logout = async () => {
-    await api("/api/admin/logout", { method: "POST", json: {} }).catch(() => undefined);
+    await api("/api/estudio/logout", { method: "POST", json: {} }).catch(() => undefined);
     onLogout();
   };
 

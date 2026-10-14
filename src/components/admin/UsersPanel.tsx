@@ -17,7 +17,7 @@ function Owner() {
   const [confirm, setConfirm] = useState("");
 
   useEffect(() => {
-    api<{ users: { email: string }[] }>("/api/admin/users")
+    api<{ users: { email: string }[] }>("/api/estudio/users")
       .then((r) => setUsers(r.users))
       .catch((e) => setError((e as Error).message));
   }, []);
@@ -28,7 +28,7 @@ function Owner() {
     setError("");
     setMsg("");
     try {
-      const r = await api<{ users: { email: string }[] }>("/api/admin/users", { json: { action: "add", email, password } });
+      const r = await api<{ users: { email: string }[] }>("/api/estudio/users", { json: { action: "add", email, password } });
       setUsers(r.users);
       setMsg(`Listo: ${email} ya puede entrar con la contraseña que le pusiste. Pásasela por un medio privado.`);
       setEmail("");
@@ -44,7 +44,7 @@ function Owner() {
     setError("");
     setMsg("");
     try {
-      const r = await api<{ users: { email: string }[] }>("/api/admin/users", { json: { action: "remove", email: em } });
+      const r = await api<{ users: { email: string }[] }>("/api/estudio/users", { json: { action: "remove", email: em } });
       setUsers(r.users);
       setMsg(`${em} ya no tiene acceso.`);
     } catch (err) {
@@ -132,7 +132,7 @@ function ChangePassword() {
     setError("");
     setOk(false);
     try {
-      await api("/api/admin/users", { json: { action: "password", actual, nueva } });
+      await api("/api/estudio/users", { json: { action: "password", actual, nueva } });
       setOk(true);
       setActual("");
       setNueva("");

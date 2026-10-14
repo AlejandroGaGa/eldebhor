@@ -16,7 +16,7 @@ export default function ProductsPanel() {
   const [ahora] = useState(() => Date.now());
 
   useEffect(() => {
-    api<{ productos: Producto[] }>("/api/admin/products")
+    api<{ productos: Producto[] }>("/api/estudio/products")
       .then((r) => setList(r.productos))
       .catch((e) => setError((e as Error).message));
   }, []);
@@ -30,7 +30,7 @@ export default function ProductsPanel() {
     setBusy(true);
     setError("");
     try {
-      const r = await api<{ productos: Producto[] }>("/api/admin/products", { json: { action: "reorder", ids } });
+      const r = await api<{ productos: Producto[] }>("/api/estudio/products", { json: { action: "reorder", ids } });
       setList(r.productos);
       setMsg(`«${list[i].nombre}» se movió ${dir < 0 ? "arriba" : "abajo"}.`);
     } catch (e) {

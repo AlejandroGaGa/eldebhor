@@ -65,16 +65,16 @@ O con la CLI: `npx vercel` (preview) y `npx vercel --prod`.
 Cada producto de `src/data/merch.ts` tiene el botón **Pedir por WhatsApp**: abre el chat con el pedido ya escrito
 (producto, talla y precio). El número está en `WHATSAPP` dentro de `src/data/site.ts` (formato `52` + 10 dígitos).
 
-## Panel de administración (/admin)
+## Panel de administración (/estudio)
 
-Desde `/admin` se editan los productos (nombre, descripción, precio, tallas, foto, agotado, ocultar, orden), se
+Desde `/estudio` se editan los productos (nombre, descripción, precio, tallas, foto, agotado, ocultar, orden), se
 ponen **ofertas por producto** (precio rebajado o porcentaje, con fecha de fin opcional que se quita sola) y una
 **franja de oferta general** del sitio. Los cambios se ven en la página al guardar.
 
 **Poner en marcha (local)**
 
 1. Copia `.env.example` a `.env.local` y llena `ADMIN_EMAIL`, `ADMIN_PASSWORD` y `ADMIN_SECRET`.
-2. `npm run dev` y entra a `http://localhost:3000/admin`.
+2. `npm run dev` y entra a `http://localhost:3000/estudio`.
 3. En local los datos viven en `.data/db.json` (no se sube a git).
 
 **Dar acceso a otra persona**: entra como dueño → pestaña **Accesos** → correo + contraseña de al menos 10
@@ -87,6 +87,8 @@ contraseña en su pestaña. Quitar el acceso cierra su sesión al instante.
 2. En Vercel → Settings → Environment Variables agrega esas dos y también `ADMIN_EMAIL`, `ADMIN_PASSWORD` y `ADMIN_SECRET`.
    (Si conectas la base desde Vercel → Storage → Upstash, Vercel crea `KV_REST_API_URL` y `KV_REST_API_TOKEN`; el panel acepta esos nombres también.)
 3. Redeploy. Sin Upstash el panel avisa que no puede guardar.
+
+**Dirección del panel**: está en `/estudio` (y no en el típico `/admin`, que los bots prueban primero). Ocultar la dirección no sustituye a la seguridad: lo que protege el panel es el login. Si quieres otra dirección, renombra las carpetas `src/app/estudio` y `src/app/api/estudio` y cambia `/api/estudio` en `src/components/admin/`.
 
 **Seguridad**: contraseñas con scrypt + sal; sesión en cookie `httpOnly` firmada (8 h); bloqueo de 15 min tras
 5 intentos fallidos; las acciones exigen mismo origen; las fotos se reducen en el navegador (JPG ≤ 900 px) y se
@@ -101,4 +103,4 @@ El sitio solo usa dos cookies de preferencia (1 año, sin rastreo ni terceros), 
   Si eligió sonido, el audio se activa en su primer toque o tecla (el navegador no permite sonar antes).
 - `eldebhor_reproductor` (`min`/`max`): recuerda si dejó el reproductor minimizado.
 
-El panel `/admin` usa además una cookie de sesión (`eldebhor_admin`, solo para quien administra).
+El panel `/estudio` usa además una cookie de sesión (`eldebhor_admin`, solo para quien administra).

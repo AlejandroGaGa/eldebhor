@@ -21,7 +21,7 @@ export type Producto = {
   /** nombre de la opción: "Talla" (por defecto), "Color", "Modelo"… */
   etiqueta?: string;
   agotado?: boolean;
-  /** false = oculto en la tienda (se administra desde /admin) */
+  /** false = oculto en la tienda (se administra desde /estudio) */
   visible?: boolean;
   /** oferta: precio rebajado y, si se quiere, el último día (AAAA-MM-DD) en que vale */
   oferta?: { precio: number; hasta?: string };
