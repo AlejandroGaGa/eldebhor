@@ -38,20 +38,18 @@ export default function Hero({ products, promo }: { products: Producto[]; promo:
   const fotoBotellas = botellas?.imagen ?? "/merch/tintas-colores.webp";
   const altBotellas = botellas?.alt ?? "Vista desde arriba de muchas botellas gotero con tapa blanca en colores azul, rosa, negro, morado, menta, rojo y blanco";
 
-  // Intro: la línea de venta aparece, la foto se pega al muro y la ficha cuelga
+  // Intro: la foto se pega al muro y la ficha cuelga
   useGSAP(
     () => {
       if (!entered) return;
       const foto = section.current!.querySelector<HTMLElement>("[data-hero-foto]");
       const ficha = section.current!.querySelector<HTMLElement>("[data-hero-ficha]");
-      const sub = section.current!.querySelector<HTMLElement>("[data-hero-sub]");
       if (reduced) {
-        gsap.set([foto, ficha, sub], { autoAlpha: 1 });
+        gsap.set([foto, ficha], { autoAlpha: 1 });
         return;
       }
       const tl = gsap.timeline({ delay: 0.3 });
-      tl.fromTo(sub, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.45 })
-        .fromTo(foto, { autoAlpha: 0, x: -90, rotation: -12, scale: 0.9 }, { autoAlpha: 1, x: 0, rotation: 0, scale: 1, duration: 0.8, ease: "back.out(1.8)", clearProps: "transform" }, "-=0.2")
+      tl.fromTo(foto, { autoAlpha: 0, x: -90, rotation: -12, scale: 0.9 }, { autoAlpha: 1, x: 0, rotation: 0, scale: 1, duration: 0.8, ease: "back.out(1.8)", clearProps: "transform" })
         .fromTo(ficha, { autoAlpha: 0, y: -120, rotation: 10 }, { autoAlpha: 1, y: 0, rotation: 0, duration: 1.3, ease: "elastic.out(1, 0.4)", transformOrigin: "50% 0%", clearProps: "transform" }, "-=0.55");
     },
     { scope: section, dependencies: [entered, reduced] },
@@ -73,12 +71,6 @@ export default function Hero({ products, promo }: { products: Producto[]; promo:
       </span>
 
       <div className="pointer-events-none relative z-10 mx-auto flex max-w-7xl flex-col justify-center gap-6 px-4 pb-14 pt-28 sm:px-10 sm:pt-24 lg:gap-8">
-        {/* línea de venta (el tag ya está en el rótulo de la fachada) */}
-        <p data-hero-sub className="invisible mx-auto max-w-[36ch] -rotate-1 text-center font-marker text-lg leading-snug text-bone sm:text-2xl" style={{ textShadow: "2px 2px 0 #000, 4px 4px 0 rgba(0,0,0,.4)" }}>
-          Chorreadores, estampas y despalilladores <span className="text-brand">hechos a mano</span>.
-          <span className="mt-1 block text-base text-taxi sm:text-lg">— pide por WhatsApp · {fine ? "mantén el clic y pinta el muro" : "toca el muro y píntalo"}</span>
-        </p>
-
         {/* foto grande + ficha */}
         <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:gap-10">
           <figure data-hero-foto className="invisible relative mx-auto w-full max-w-[36rem] border-4 border-black bg-white shadow-[6px_6px_0_#121110] sm:-rotate-2 sm:shadow-[10px_10px_0_#121110] lg:max-w-none">

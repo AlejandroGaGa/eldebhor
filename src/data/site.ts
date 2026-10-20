@@ -7,6 +7,18 @@ export const INSTAGRAM = "eldhebor";
 
 export const igProfile = `https://instagram.com/${INSTAGRAM}`;
 
+/**
+ * FACEBOOK: enlace completo a la página del debhor (p. ej. https://www.facebook.com/eldebhor).
+ * Déjalo vacío ("") y el botón de Facebook no se muestra.
+ */
+export const FACEBOOK = "https://www.facebook.com/share/1KRDWsEFai/";
+
+/** Redes del debhor, en el orden en que salen en el pie. Solo las que tienen enlace. */
+export const REDES = [
+  { red: "instagram" as const, nombre: "Instagram", usuario: `@${INSTAGRAM}`, url: igProfile },
+  { red: "facebook" as const, nombre: "Facebook", usuario: "el debhor", url: FACEBOOK },
+].filter((r) => r.url);
+
 /** Crédito del desarrollador (perfil personal). */
 export const DEV_NAME = "GAGA";
 export const DEV_INSTAGRAM = "gagaeldev";

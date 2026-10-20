@@ -1,4 +1,4 @@
-import { INSTAGRAM, WHATSAPP } from "@/data/site";
+import { REDES, WHATSAPP } from "@/data/site";
 
 /**
  * URL pública del sitio (sin «/» final). Configura NEXT_PUBLIC_SITE_URL en Vercel
@@ -15,5 +15,5 @@ export const SITE_TITLE = "ELDEBHOR — graffiti, arte urbano y merch.";
 export const SITE_DESCRIPTION =
   "ELDEBHOR: graffiti y arte urbano hecho a mano. Conoce las obras, recorre el muro libre y compra playeras, pines, grinders y más por WhatsApp.";
 
-export const SAME_AS = [`https://instagram.com/${INSTAGRAM}`];
+export const SAME_AS = REDES.map((r) => r.url);
 export const TELEFONO = `+${WHATSAPP}`;
