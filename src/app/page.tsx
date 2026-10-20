@@ -3,7 +3,7 @@ import { loadStorefront } from "@/lib/shop-data";
 import { SAME_AS, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo";
 
 export default async function Page() {
-  const { products, promo } = await loadStorefront();
+  const { products, promo, reels } = await loadStorefront();
 
   // Datos estructurados (JSON-LD) para que Google entienda la marca y la tienda.
   const jsonLd = {
@@ -60,7 +60,7 @@ export default async function Page() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
-      <Experience products={products} promo={promo} />
+      <Experience products={products} promo={promo} reels={reels} />
     </>
   );
 }

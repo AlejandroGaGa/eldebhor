@@ -19,6 +19,7 @@ import Manifesto from "./Manifesto";
 import dynamic from "next/dynamic";
 import Gallery from "./Gallery";
 import Merch from "./Merch";
+import Reels from "./Reels";
 import LazySection from "./LazySection";
 import Footer from "./Footer";
 import SubirBtn from "./SubirBtn";
@@ -36,7 +37,7 @@ const FreeWall = dynamic(() => import("./FreeWall"), { ssr: false });
 
 const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
 
-export default function Experience({ products, promo }: { products: Producto[]; promo: Promo | null }) {
+export default function Experience({ products, promo, reels }: { products: Producto[]; promo: Promo | null; reels: string[] }) {
   const entered = useStore((s) => s.entered);
 
   // Smooth scroll, synced with GSAP's ticker
@@ -131,12 +132,17 @@ export default function Experience({ products, promo }: { products: Producto[]; 
       </a>
       <SvgDefs />
       <Loader />
-      <Hud />
+      <Hud conReels={reels.length > 0} />
       <SpotifyPlayer />
       <main id="main" inert={!entered} aria-hidden={!entered}>
         {/* la portada y la tienda van primero: el resto de la experiencia sigue abajo */}
         <Hero products={products} promo={promo} />
         <Merch products={products} promo={promo} />
+        {reels.length > 0 && (
+          <LazySection id="reels" className="min-h-[70dvh] bg-[#0b0b0c]" margen="600px">
+            <Reels reels={reels} />
+          </LazySection>
+        )}
         <CautionTape />
         <Manifesto />
         <LazySection className="min-h-[100dvh] bg-[#0b0b0c]">

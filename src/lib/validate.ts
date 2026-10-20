@@ -93,3 +93,27 @@ export function parsePromo(raw: unknown): R<Promo> {
   if (r.hasta !== undefined && r.hasta !== null && r.hasta !== "" && !validDate(r.hasta)) return fail("La fecha de fin no es válida.");
   return { ok: true, value: { activo, texto, ...(validDate(r.hasta) ? { hasta: r.hasta } : {}) } };
 }
+
+export const REELS_MAX = 12;
+const REEL = /^(?:https?:\/\/)?(?:www\.)?instagram\.com\/(?:[\w.]+\/)?(reels?|p)\/([\w-]{5,40})\/?(?:[?#].*)?$/i;
+
+/** Acepta el enlace tal como se copia de Instagram (reel, reels, p; con o sin usuario y parámetros) y lo deja en su forma canónica. */
+export const normalizarReel = (raw: unknown): string | null => {
+  if (typeof raw !== "string") return null;
+  const m = raw.trim().match(REEL);
+  return m ? `https://www.instagram.com/${m[1].toLowerCase() === "p" ? "p" : "reel"}/${m[2]}/` : null;
+};
+
+export function parseReels(raw: unknown): R<string[]> {
+  if (!raw || typeof raw !== "object") return fail("Datos inválidos.");
+  const list = (raw as Record<string, unknown>).reels;
+  if (!Array.isArray(list)) return fail("Datos inválidos.");
+  if (list.length > REELS_MAX) return fail(`Máximo ${REELS_MAX} reels en el carrusel.`);
+  const out: string[] = [];
+  for (const u of list) {
+    const n = normalizarReel(u);
+    if (!n) return fail(`Este enlace no parece un reel de Instagram: ${typeof u === "string" ? u.slice(0, 80) : "?"}`);
+    if (!out.includes(n)) out.push(n);
+  }
+  return { ok: true, value: out };
+}

@@ -4,10 +4,11 @@ import { useCallback, useEffect, useState } from "react";
 import { api, ui } from "./client";
 import ProductsPanel from "./ProductsPanel";
 import PromoPanel from "./PromoPanel";
+import ReelsPanel from "./ReelsPanel";
 import UsersPanel from "./UsersPanel";
 
 type Me = { configured: boolean; storage: "upstash" | "file" | "none"; user: { email: string; owner: boolean } | null };
-type Tab = "productos" | "oferta" | "accesos";
+type Tab = "productos" | "oferta" | "reels" | "accesos";
 
 export default function AdminApp() {
   const [me, setMe] = useState<Me | null>(null);
@@ -132,6 +133,7 @@ function Panel({ me, onLogout }: { me: Me & { user: NonNullable<Me["user"]> }; o
   const tabs: [Tab, string][] = [
     ["productos", "Productos"],
     ["oferta", "Oferta del sitio"],
+    ["reels", "Reels"],
     ["accesos", me.user.owner ? "Accesos" : "Mi contraseña"],
   ];
 
@@ -178,6 +180,7 @@ function Panel({ me, onLogout }: { me: Me & { user: NonNullable<Me["user"]> }; o
 
       {tab === "productos" && <ProductsPanel />}
       {tab === "oferta" && <PromoPanel />}
+      {tab === "reels" && <ReelsPanel />}
       {tab === "accesos" && <UsersPanel owner={me.user.owner} />}
     </div>
   );

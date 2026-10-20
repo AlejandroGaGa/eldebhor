@@ -7,7 +7,7 @@ import { useStore } from "@/lib/store";
 import { blip } from "@/lib/audio";
 import { scrollToId, scrollToTop } from "@/lib/scroll";
 
-export default function Hud() {
+export default function Hud({ conReels = false }: { conReels?: boolean }) {
   const entered = useStore((s) => s.entered);
   const root = useRef<HTMLDivElement>(null);
 
@@ -42,6 +42,11 @@ export default function Hud() {
             <a href="#merch" data-cursor="MERCH" className="flex min-h-[48px] items-center rounded-full bg-ink/80 px-4 text-sm font-bold text-bone backdrop-blur-sm hover:text-brand">
               Merch
             </a>
+            {conReels && (
+              <a href="#reels" data-cursor="IG" className="flex min-h-[48px] items-center rounded-full bg-ink/80 px-4 text-sm font-bold text-bone backdrop-blur-sm hover:text-brand">
+                Reels
+              </a>
+            )}
           </nav>
           {/* atajo directo al merch en celular (en pantallas grandes ya está en la barra) */}
           <a
