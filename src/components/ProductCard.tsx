@@ -10,8 +10,21 @@ import ProductArt from "./ProductArt";
 
 export const money = (n: number, cur: string) => `$${n.toLocaleString("es-MX")} ${cur}`;
 
-/** La pieza que se vende en la portada: la primera visible marcada como destacada; si no hay, la primera del catálogo. */
-export const destacada = (products: Producto[]) => products.find((p) => p.destacado && !p.agotado) ?? products.find((p) => p.destacado) ?? products[0] ?? null;
+/**
+ * La pieza que se vende en la portada: la primera marcada como destacada en /estudio; si ninguna lo está
+ * (p. ej. un catálogo guardado antes de que existiera esa opción), los chorreadores; y si tampoco, la primera.
+ */
+export const destacada = (products: Producto[]) => {
+  const chorreador = (p: Producto) => /chorreador/i.test(p.id) || /chorreador/i.test(p.nombre) || p.id === "tintas-colores";
+  return (
+    products.find((p) => p.destacado && !p.agotado) ??
+    products.find((p) => p.destacado) ??
+    products.find((p) => chorreador(p) && !p.agotado) ??
+    products.find(chorreador) ??
+    products[0] ??
+    null
+  );
+};
 
 /** Aviso abajo de la pantalla («Abriendo WhatsApp…»). */
 export function useToast() {
