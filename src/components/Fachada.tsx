@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 /** El toldo de rayas con su orilla ondulada (se usa en la fachada y en la copia fija de arriba). */
 export function Toldo({ className = "" }: { className?: string }) {
@@ -32,7 +33,7 @@ export default function Fachada() {
         <span aria-hidden="true" className="pointer-events-none absolute -left-2 top-1 rotate-[-10deg] font-tag text-5xl text-bubble/70 sm:text-7xl" style={{ filter: "url(#rough)" }}>
           dbh
         </span>
-        <span aria-hidden="true" className="pointer-events-none absolute right-[6%] -top-1 rotate-[8deg] font-marker text-2xl text-navy/70 sm:text-4xl" style={{ filter: "url(#rough)" }}>
+        <span aria-hidden="true" className="pointer-events-none absolute right-[6%] -top-1 hidden rotate-[8deg] font-marker text-2xl text-navy/70 sm:block sm:text-4xl" style={{ filter: "url(#rough)" }}>
           nadie ✦ crew
         </span>
         <span aria-hidden="true" className="pointer-events-none absolute bottom-0 left-[6%] hidden rotate-[-6deg] font-tag text-5xl text-brand/80 sm:block lg:left-[12%]" style={{ filter: "url(#rough)" }}>
@@ -45,14 +46,20 @@ export default function Fachada() {
 
         <div className="relative mx-auto flex max-w-7xl flex-col items-center text-center">
           <p className="-rotate-1 font-marker text-lg uppercase tracking-[0.35em] text-[#c10f24] sm:text-2xl" style={{ textShadow: "1px 1px 0 #000" }}>
-            Miscelánea
+            Miscelánea de
           </p>
-          <p
-            className="font-block text-[clamp(2.4rem,11vw,6.5rem)] uppercase leading-[0.9] text-brand"
-            style={{ textShadow: "0.06em 0.06em 0 #241b51, 0.1em 0.1em 0 #000", filter: "url(#rough)" }}
-          >
-            El Debhor
-          </p>
+          <h1 id="hero-title" aria-label="ELDEBHOR" className="mt-1 select-none">
+            <Image
+              src="/brand/logo-tag.webp"
+              alt=""
+              width={880}
+              height={669}
+              priority
+              sizes="(min-width: 1024px) 420px, 62vw"
+              className="h-auto w-[min(62vw,15rem)] drop-shadow-[5px_6px_0_rgba(0,0,0,.35)] sm:w-[18rem] lg:w-[22rem]"
+              draggable={false}
+            />
+          </h1>
           <p className="mt-2 rotate-[0.5deg] font-marker text-base text-ink sm:text-xl">
             Pintura ✦ Chorreadores ✦ Estampas ✦ Merch <span className="text-[#c10f24]">— la tienda del debhor</span>
           </p>

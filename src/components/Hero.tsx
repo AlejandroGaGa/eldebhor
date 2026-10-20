@@ -4,24 +4,15 @@ import { useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { store, useStore } from "@/lib/store";
+import { useStore } from "@/lib/store";
 import { usePaintSurface } from "@/lib/usePaintSurface";
-import { animatePath, blobFillPath, ringPath } from "@/lib/spray";
-import { pieceFill } from "@/lib/color";
-import { blip, slap } from "@/lib/audio";
-import { PALETTE } from "@/lib/palette";
+import { blip } from "@/lib/audio";
 import { scrollToId, useFinePointer, useReducedMotion } from "@/lib/scroll";
 import type { Producto } from "@/data/merch";
 import { descuento, fechaLarga, type Promo } from "@/lib/offers";
 import { BotonPedir, destacada, money, Opciones, Toast, usePedido, useToast } from "./ProductCard";
 import Fachada from "./Fachada";
 
-const SPARKS = [
-  { l: "-6%", t: "-14%", s: 44, d: 0 },
-  { l: "92%", t: "-10%", s: 30, d: 0.7 },
-  { l: "100%", t: "60%", s: 36, d: 1.3 },
-  { l: "-8%", t: "70%", s: 28, d: 0.4 },
-];
 
 /**
  * Portada = la tienda. Arriba el tag, a la izquierda la foto grande (las salpicaduras de los
@@ -34,78 +25,34 @@ export default function Hero({ products, promo }: { products: Producto[]; promo:
   const reduced = useReducedMotion();
   const section = useRef<HTMLElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
-  const title = useRef<HTMLHeadingElement>(null);
-  const painter = usePaintSurface(canvas, {
+  // el muro se puede pintar con el clic / el dedo
+  usePaintSurface(canvas, {
     radius: () => (window.innerWidth < 640 ? 18 : 30),
   });
   const { toast, say } = useToast();
   const pieza = destacada(products);
 
-  // Intro: el fantasma rocía una nube detrás del tag, el tag cae, la foto se pega y la ficha cuelga
+  // Intro: la línea de venta aparece, la foto se pega al muro y la ficha cuelga
   useGSAP(
     () => {
       if (!entered) return;
-      const logo = title.current!;
-      const extras = gsap.utils.toArray<HTMLElement>("[data-hero-extra]", section.current);
       const foto = section.current!.querySelector<HTMLElement>("[data-hero-foto]");
       const ficha = section.current!.querySelector<HTMLElement>("[data-hero-ficha]");
       const sub = section.current!.querySelector<HTMLElement>("[data-hero-sub]");
       if (reduced) {
-        gsap.set([logo, extras, foto, ficha, sub], { autoAlpha: 1 });
+        gsap.set([foto, ficha, sub], { autoAlpha: 1 });
         return;
       }
-      const signal = { cancelled: false };
-      const p = painter.current;
-      const tr = logo.getBoundingClientRect();
-      const sr = section.current!.getBoundingClientRect();
-      const cx = tr.left - sr.left + tr.width / 2;
-      const cy = tr.top - sr.top + tr.height / 2;
-      if (p) {
-        const r = Math.max(18, tr.height * 0.16);
-        void animatePath(p, blobFillPath(cx, cy, tr.width * 0.62, tr.height * 0.95, r * 0.9), { color: "#2ec6ee", radius: r }, 900, signal).then(() =>
-          animatePath(p, ringPath(cx, cy, tr.width * 0.64, tr.height * 1.0), { color: "#141414", radius: r * 0.5 }, 600, signal),
-        );
-      }
-      const tl = gsap.timeline({ delay: 0.4 });
-      tl.fromTo(
-        logo,
-        { autoAlpha: 0, scale: 2.6, y: -120, rotation: -14, filter: "blur(16px)" },
-        { autoAlpha: 1, scale: 1, y: 0, rotation: -2, filter: "blur(0px)", duration: 0.7, ease: "back.out(2.2)", clearProps: "filter" },
-      )
-        .add(() => {
-          const pp = painter.current;
-          if (!pp) return;
-          const r = logo.getBoundingClientRect();
-          const s = section.current!.getBoundingClientRect();
-          for (let j = 0; j < 4; j++) pp.drip(r.left - s.left + r.width * gsap.utils.random(0.15, 0.85), r.bottom - s.top - r.height * 0.2, "#2ec6ee", gsap.utils.random(4, 9));
-        })
-        .fromTo(sub, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.45 }, "-=0.25")
-        .fromTo(foto, { autoAlpha: 0, x: -90, rotation: -12, scale: 0.9 }, { autoAlpha: 1, x: 0, rotation: 0, scale: 1, duration: 0.8, ease: "back.out(1.8)", clearProps: "transform" }, "-=0.3")
-        .fromTo(ficha, { autoAlpha: 0, y: -120, rotation: 10 }, { autoAlpha: 1, y: 0, rotation: 0, duration: 1.3, ease: "elastic.out(1, 0.4)", transformOrigin: "50% 0%", clearProps: "transform" }, "-=0.55")
-        .fromTo(extras, { autoAlpha: 0, scale: 0 }, { autoAlpha: 1, scale: 1, stagger: 0.06, duration: 0.5, ease: "back.out(3)" }, "-=1");
-      return () => {
-        signal.cancelled = true;
-      };
+      const tl = gsap.timeline({ delay: 0.3 });
+      tl.fromTo(sub, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.45 })
+        .fromTo(foto, { autoAlpha: 0, x: -90, rotation: -12, scale: 0.9 }, { autoAlpha: 1, x: 0, rotation: 0, scale: 1, duration: 0.8, ease: "back.out(1.8)", clearProps: "transform" }, "-=0.2")
+        .fromTo(ficha, { autoAlpha: 0, y: -120, rotation: 10 }, { autoAlpha: 1, y: 0, rotation: 0, duration: 1.3, ease: "elastic.out(1, 0.4)", transformOrigin: "50% 0%", clearProps: "transform" }, "-=0.55");
     },
     { scope: section, dependencies: [entered, reduced] },
   );
 
-  // Tocar el tag: se aplasta, cambia de color y salpica el muro
-  const hitLogo = (el: HTMLElement) => {
-    const inner = el.querySelector<HTMLElement>(".tag-inner")!;
-    const color = store.get().color;
-    const under = PALETTE[Math.floor(Math.random() * PALETTE.length)].hex;
-    inner.style.setProperty("--fill", pieceFill(color, under === color ? "#ff2e88" : under));
-    slap(0.7);
-    if (!reduced) gsap.fromTo(inner, { scaleX: 1.3, scaleY: 0.65 }, { scaleX: 1, scaleY: 1, duration: 0.9, ease: "elastic.out(1.2,0.3)" });
-    const p = painter.current;
-    const s = section.current!.getBoundingClientRect();
-    const lr = el.getBoundingClientRect();
-    if (p) p.splat(lr.left - s.left + lr.width * gsap.utils.random(0.1, 0.9), lr.bottom - s.top - lr.height * gsap.utils.random(0, 0.15), color, gsap.utils.random(50, 90));
-  };
-
   return (
-    <section ref={section} className="bricks relative isolate overflow-x-clip overflow-y-hidden" aria-labelledby="hero-title">
+    <section ref={section} className="bricks relative isolate overflow-x-clip overflow-y-hidden" aria-label="Tienda: pieza de portada">
       <canvas ref={canvas} className="absolute inset-0 h-full w-full touch-pan-y" data-cursor={fine ? "PINTA" : undefined} aria-hidden="true" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,.55))]" aria-hidden="true" />
 
@@ -119,45 +66,12 @@ export default function Hero({ products, promo }: { products: Producto[]; promo:
         x crew: nadie x
       </span>
 
-      <div className="pointer-events-none relative z-10 mx-auto flex max-w-7xl flex-col justify-center gap-6 px-4 pb-14 pt-16 sm:px-10 sm:pt-20 lg:gap-8">
-        {/* tag + línea de venta */}
-        <div className="flex flex-col items-start gap-3 text-left sm:items-center sm:text-center lg:flex-row lg:items-end lg:justify-between lg:text-left">
-          <div className="relative">
-            <h1 id="hero-title" ref={title} aria-label="ELDEBHOR" className="tag-l invisible select-none">
-              <span
-                aria-hidden="true"
-                className="pointer-events-auto block"
-                onPointerDown={(e) => e.pointerType === "mouse" && hitLogo(e.currentTarget)}
-                onClick={(e) => {
-                  if ((e.nativeEvent as PointerEvent).pointerType !== "mouse") hitLogo(e.currentTarget);
-                }}
-                data-cursor="¡REVIENTA!"
-              >
-                <span className="tag-inner relative block">
-                  <Image
-                    src="/brand/logo-tag.webp"
-                    alt=""
-                    width={880}
-                    height={669}
-                    priority
-                    sizes="(min-width: 1024px) 340px, 60vw"
-                    className="h-auto w-[min(52vw,14rem)] drop-shadow-[5px_6px_0_rgba(0,0,0,.45)] sm:w-[16rem] lg:w-[21rem]"
-                    draggable={false}
-                  />
-                </span>
-              </span>
-            </h1>
-            {SPARKS.map((s, i) => (
-              <svg key={i} data-hero-extra viewBox="0 0 40 40" width={s.s} height={s.s} aria-hidden="true" className="invisible absolute" style={{ left: s.l, top: s.t }}>
-                <path className="twinkle" style={{ animationDelay: `${s.d}s`, transformOrigin: "20px 20px" }} d="M20 0 C22 14 26 18 40 20 C26 22 22 26 20 40 C18 26 14 22 0 20 C14 18 18 14 20 0Z" fill="#fff" stroke="#000" strokeWidth="2" />
-              </svg>
-            ))}
-          </div>
-          <p data-hero-sub className="invisible max-w-[30ch] -rotate-1 font-marker text-lg leading-snug text-bone sm:text-2xl" style={{ textShadow: "2px 2px 0 #000, 4px 4px 0 rgba(0,0,0,.4)" }}>
-            Chorreadores, estampas y despalilladores <span className="text-brand">hechos a mano</span>.
-            <span className="mt-1 block text-base text-taxi sm:text-lg">— pide por WhatsApp · {fine ? "mantén el clic y pinta el muro" : "toca el muro y píntalo"}</span>
-          </p>
-        </div>
+      <div className="pointer-events-none relative z-10 mx-auto flex max-w-7xl flex-col justify-center gap-6 px-4 pb-14 pt-28 sm:px-10 sm:pt-24 lg:gap-8">
+        {/* línea de venta (el tag ya está en el rótulo de la fachada) */}
+        <p data-hero-sub className="invisible mx-auto max-w-[36ch] -rotate-1 text-center font-marker text-lg leading-snug text-bone sm:text-2xl" style={{ textShadow: "2px 2px 0 #000, 4px 4px 0 rgba(0,0,0,.4)" }}>
+          Chorreadores, estampas y despalilladores <span className="text-brand">hechos a mano</span>.
+          <span className="mt-1 block text-base text-taxi sm:text-lg">— pide por WhatsApp · {fine ? "mantén el clic y pinta el muro" : "toca el muro y píntalo"}</span>
+        </p>
 
         {/* foto grande + ficha */}
         <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:gap-10">
