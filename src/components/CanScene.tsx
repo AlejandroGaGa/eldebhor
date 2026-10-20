@@ -125,7 +125,7 @@ function useLabelTexture(color: string, colorName: string) {
       const css = getComputedStyle(document.documentElement);
       const block = css.getPropertyValue("--ff-block") || "sans-serif";
       const tag = css.getPropertyValue("--ff-tag") || "cursive";
-      const mono = css.getPropertyValue("--ff-mono") || "monospace";
+      const mono = css.getPropertyValue("--ff-body") || "sans-serif";
       const W = canvas.width;
       const H = canvas.height;
       ctx.fillStyle = color;

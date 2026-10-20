@@ -16,17 +16,22 @@ import SpotifyPlayer from "./SpotifyPlayer";
 import Hero from "./Hero";
 import CautionTape from "./CautionTape";
 import Manifesto from "./Manifesto";
-import Train from "./Train";
-import CanLab from "./CanLab";
+import dynamic from "next/dynamic";
 import Gallery from "./Gallery";
 import Merch from "./Merch";
-import StickerBomb from "./StickerBomb";
-import FreeWall from "./FreeWall";
+import LazySection from "./LazySection";
 import Footer from "./Footer";
+import SubirBtn from "./SubirBtn";
 import type { Producto } from "@/data/merch";
 import type { Promo } from "@/lib/offers";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+// Secciones pesadas (canvas, three.js, matter-js): su JS se descarga solo cuando el visitante se acerca.
+const Train = dynamic(() => import("./Train"), { ssr: false });
+const CanLab = dynamic(() => import("./CanLab"), { ssr: false });
+const StickerBomb = dynamic(() => import("./StickerBomb"), { ssr: false });
+const FreeWall = dynamic(() => import("./FreeWall"), { ssr: false });
 
 const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
 
@@ -128,17 +133,27 @@ export default function Experience({ products, promo }: { products: Producto[]; 
       <Hud />
       <SpotifyPlayer />
       <main id="main" inert={!entered} aria-hidden={!entered}>
-        <Hero />
+        {/* la portada y la tienda van primero: el resto de la experiencia sigue abajo */}
+        <Hero products={products} promo={promo} />
+        <Merch products={products} promo={promo} />
         <CautionTape />
         <Manifesto />
-        <Train />
+        <LazySection className="min-h-[100dvh] bg-[#0b0b0c]">
+          <Train />
+        </LazySection>
         <Gallery />
-        <CanLab />
-        <StickerBomb />
-        <Merch products={products} promo={promo} />
-        <FreeWall />
+        <LazySection className="concrete min-h-[100dvh]">
+          <CanLab />
+        </LazySection>
+        <LazySection className="concrete-light min-h-[100dvh]">
+          <StickerBomb />
+        </LazySection>
+        <LazySection id="muro-libre" className="concrete min-h-[80dvh] scroll-mt-4">
+          <FreeWall />
+        </LazySection>
         <Footer />
       </main>
+      <SubirBtn />
       <Cursor />
       <div className="grain" aria-hidden="true" />
     </>

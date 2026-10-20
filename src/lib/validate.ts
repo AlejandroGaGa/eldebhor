@@ -57,6 +57,7 @@ export function parseProducto(raw: unknown): R<Producto> {
     agotado: r.agotado === true,
     visible: r.visible !== false,
   };
+  if (r.destacado === true) p.destacado = true;
   if (precio != null) p.precio = precio;
   if (oferta) p.oferta = oferta;
   if (opciones) {

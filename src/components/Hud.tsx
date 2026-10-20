@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { store, useStore } from "@/lib/store";
 import { blip, sprayOff, unlockAudio } from "@/lib/audio";
 import { scrollToId, scrollToTop } from "@/lib/scroll";
@@ -12,26 +11,18 @@ import { savePref, SOUND_COOKIE } from "@/lib/prefs";
 export default function Hud() {
   const entered = useStore((s) => s.entered);
   const sound = useStore((s) => s.sound);
-  const color = useStore((s) => s.color);
-  const colorName = useStore((s) => s.colorName);
   const root = useRef<HTMLDivElement>(null);
-  const level = useRef<HTMLDivElement>(null);
-  const pctRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     if (!entered) return;
     gsap.fromTo(root.current, { autoAlpha: 0, y: -20 }, { autoAlpha: 1, y: 0, duration: 0.6, delay: 0.6, ease: "back.out(2)" });
-    const st = ScrollTrigger.create({
-      start: 0,
-      end: "max",
-      onUpdate: (self) => {
-        // the can empties as you scroll: you are "spending" paint
-        gsap.set(level.current, { scaleY: 1 - self.progress });
-        if (pctRef.current) pctRef.current.textContent = `${Math.round((1 - self.progress) * 100)}%`;
-      },
-    });
-    return () => st.kill();
   }, [entered]);
+
+  // el tag de la esquina lleva al inicio (Lenis si hay; si no, salto suave del navegador)
+  const irArriba = () => {
+    blip(880);
+    scrollToTop();
+  };
 
   const toggleSound = () => {
     unlockAudio();
@@ -47,12 +38,12 @@ export default function Hud() {
       <div className="flex items-start justify-between gap-2 p-3 sm:p-5">
         <button
           type="button"
-          onClick={scrollToTop}
+          onClick={irArriba}
           data-cursor="ARRIBA"
           aria-label="ELDEBHOR, volver al inicio"
           className="pointer-events-auto flex min-h-[48px] min-w-[48px] items-center justify-center rounded-full bg-ink/80 px-3 backdrop-blur-sm"
         >
-          <Image src="/brand/logo-tag.png" alt="" width={880} height={669} priority className="h-9 w-auto" />
+          <Image src="/brand/logo-tag.webp" alt="" width={880} height={669} priority className="h-9 w-auto" />
         </button>
         <div className="pointer-events-auto flex items-center gap-2">
           <nav aria-label="Secciones" className="hidden items-center gap-2 md:flex">
@@ -81,10 +72,6 @@ export default function Hud() {
             Merch
             <span className="sr-only"> (ir directo a la tienda)</span>
           </a>
-          <p className="flex min-h-[48px] items-center gap-2 whitespace-nowrap rounded-full bg-ink/80 px-3 text-sm text-bone backdrop-blur-sm" aria-live="polite">
-            <span className="h-5 w-5 rounded-full border-2 border-bone" style={{ background: color }} aria-hidden="true" />
-            <span className="hidden min-[680px]:inline">Lata:</span> <span className="font-bold max-[559px]:sr-only">{colorName}</span>
-          </p>
           <button
             type="button"
             onClick={toggleSound}
@@ -97,13 +84,6 @@ export default function Hud() {
             <span className="hidden whitespace-nowrap min-[560px]:inline">{sound ? "Sonido sí" : "Sonido no"}</span>
           </button>
         </div>
-      </div>
-      {/* paint level */}
-      <div className="absolute right-3 top-[calc(100dvh-13rem)] hidden flex-col items-center gap-1 sm:flex" aria-hidden="true">
-        <div className="relative h-24 w-7 overflow-hidden rounded-md border-[3px] border-bone bg-ink/80">
-          <div ref={level} className="absolute inset-0 origin-bottom" style={{ background: color }} />
-        </div>
-        <span ref={pctRef} className="font-mono text-xs text-bone">100%</span>
       </div>
     </div>
   );

@@ -110,7 +110,7 @@ export default function Gallery() {
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="font-mono text-base uppercase tracking-[0.35em] text-taxi">✦ Galería</p>
+            <p className="font-body text-base uppercase tracking-[0.35em] text-taxi">✦ Galería</p>
             <h2 id="gal-title" data-gal-title className="mt-2 flex overflow-hidden pb-2 font-wet text-[clamp(3.5rem,14vw,10rem)] leading-[0.85] text-bone" style={{ textShadow: "6px 6px 0 #9b5cff" }}>
               <span className="sr-only">Obras</span>
               {"Obras".split("").map((c, i) => (
@@ -169,7 +169,7 @@ export default function Gallery() {
                     </span>
                     <span className="absolute inset-x-3 bottom-3 flex items-baseline justify-between gap-2 text-ink">
                       <span className="min-w-0 truncate font-marker text-xl">{o.titulo}</span>
-                      {o.anio && <span className="shrink-0 font-mono text-sm font-bold">{o.anio}</span>}
+                      {o.anio && <span className="shrink-0 font-body text-sm font-bold">{o.anio}</span>}
                     </span>
                   </button>
                 </div>

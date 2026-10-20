@@ -71,7 +71,7 @@ export default function PromoPanel() {
 
       {promo.activo && promo.texto && (
         <div className="rotate-1 border-4 border-black bg-bubble px-5 py-4 text-white" aria-label="Vista previa">
-          <p className="font-mono text-sm font-bold uppercase tracking-[0.25em]">✦ Oferta</p>
+          <p className="font-body text-sm font-bold uppercase tracking-[0.25em]">✦ Oferta</p>
           <p className="mt-1 font-block text-2xl leading-tight">{promo.texto}</p>
           {promo.hasta && <p className="mt-1 text-base font-bold">Hasta el {fechaLarga(promo.hasta)}</p>}
         </div>

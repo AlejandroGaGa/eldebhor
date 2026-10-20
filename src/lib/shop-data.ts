@@ -37,12 +37,14 @@ export const writePromo = (p: Promo) => kv.set(K_PROMO, JSON.stringify(p));
 export const imageIds = (list: Producto[]) => new Set(list.map((p) => p.imagen?.match(/^\/api\/img\/([a-f0-9]{16})$/)?.[1]).filter(Boolean) as string[]);
 
 /**
- * Lo que ve el público. Se guarda unos minutos en caché y se invalida al guardar desde el panel
- * (etiqueta «catalogo»). Las ofertas con fecha vencida se quitan aquí.
+ * Lo que ve el público. Se guarda en caché por días (así casi no se consulta Upstash) y se invalida
+ * al guardar desde el panel (etiqueta «catalogo»). Las ofertas con fecha vencida se quitan aquí; como
+ * la caché dura días, una oferta con fecha de fin puede verse hasta un día más: si urge, basta con
+ * guardar cualquier cosa en el panel para refrescar.
  */
 export async function loadStorefront(): Promise<{ products: Producto[]; promo: Promo | null }> {
   "use cache";
-  cacheLife("minutes");
+  cacheLife("days");
   cacheTag("catalogo");
   try {
     const [all, promo] = await Promise.all([readProducts(), readPromo()]);

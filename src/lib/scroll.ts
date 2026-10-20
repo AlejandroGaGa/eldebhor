@@ -10,8 +10,8 @@ export const setLenis = (l: Lenis | null) => {
 export const getLenis = () => lenis;
 
 export function scrollToTop() {
-  if (lenis) lenis.scrollTo(0, { duration: 2.2 });
-  else window.scrollTo({ top: 0, behavior: "auto" });
+  if (lenis) lenis.scrollTo(0, { duration: 1.6 });
+  else window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 }
 
 /** Salta a una sección por su id (con Lenis si hay; si no, salto nativo) y corrige si el layout se movió al llegar. */

@@ -9,14 +9,9 @@ const block = localFont({ src: "../fonts/bungee-latin-400-normal.woff2", variabl
 const marker = localFont({ src: "../fonts/permanent-marker-latin-400-normal.woff2", variable: "--ff-marker", display: "swap" });
 const wet = localFont({ src: "../fonts/rubik-wet-paint-latin-400-normal.woff2", variable: "--ff-wet", display: "swap" });
 const spray = localFont({ src: "../fonts/rubik-spray-paint-latin-400-normal.woff2", variable: "--ff-spray", display: "swap" });
-const mono = localFont({
-  src: [
-    { path: "../fonts/space-mono-latin-400-normal.woff2", weight: "400" },
-    { path: "../fonts/space-mono-latin-700-normal.woff2", weight: "700" },
-  ],
-  variable: "--ff-mono",
-  display: "swap",
-});
+// Texto de lectura: Fredoka (variable, 300–700). Redonda y gordita como las letras burbuja del tag:
+// se lee bien en celular y no se parece a la tipografía de ninguna otra tienda.
+const body = localFont({ src: "../fonts/fredoka-latin-wght-normal.woff2", weight: "300 700", variable: "--ff-body", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -49,7 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="es"
       suppressHydrationWarning
-      className={`${tag.variable} ${block.variable} ${marker.variable} ${wet.variable} ${spray.variable} ${mono.variable} antialiased`}
+      className={`${tag.variable} ${block.variable} ${marker.variable} ${wet.variable} ${spray.variable} ${body.variable} antialiased`}
     >
       <body>
         {/* si ya eligió sonido antes, se marca el <html> antes del primer pintado para no mostrar la pantalla de carga */}

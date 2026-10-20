@@ -11,8 +11,8 @@ const fmt = (s: number) => {
 };
 
 /**
- * Mini reproductor: aparece cuando el «Manifiesto 001» entra en pantalla y arranca
- * la canción (/rolita.mp3) desde el segundo 4 si el visitante entró con sonido.
+ * Mini reproductor: aparece en cuanto se entra al sitio y arranca la canción (/rolita.mp3)
+ * desde el segundo 4 si el visitante entró con sonido (o en cuanto lo active en la barra).
  * Se puede minimizar (la canción sigue sonando) y se recuerda en una cookie.
  * Si el navegador bloquea el audio automático, suena en el primer toque o tecla del visitante.
  */
@@ -65,31 +65,31 @@ export default function SpotifyPlayer() {
     else a.addEventListener("loadedmetadata", go, { once: true });
   };
 
-  // appear when «Manifiesto 001» enters the screen (first time only)
+  // arranca al entrar al sitio (el botón «Con sonido» de la pantalla de carga ya cuenta como gesto del visitante)
   useEffect(() => {
     if (!entered) return;
-    const el = document.getElementById("manifiesto");
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (!e.isIntersecting) return;
-        io.disconnect();
-        setMinimized(readPref(PLAYER_COOKIE) === "min");
-        setShown(true);
-        begin();
-      },
-      // el manifiesto es alto en celular: basta con que asome en el 60% superior de la pantalla
-      { threshold: 0, rootMargin: "0px 0px -40% 0px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
+    const id = window.setTimeout(() => {
+      setMinimized(readPref(PLAYER_COOKIE) === "min");
+      setShown(true);
+      begin();
+    }, 400);
+    return () => window.clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entered]);
 
-  // «Sonido no» in the HUD also silences the song
+  // «Sonido no» en la barra pausa la canción; «Sonido sí» la arranca (o la reanuda si no la pausó el visitante)
   useEffect(() => {
-    if (!sound) audio.current?.pause();
-  }, [sound]);
+    const a = audio.current;
+    if (!a) return;
+    if (!sound) {
+      a.pause();
+      return;
+    }
+    if (!entered) return;
+    if (!started.current) begin();
+    else if (a.paused && !userPaused.current) a.play().catch(() => armRetry());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sound, entered]);
 
   const toggle = () => {
     const a = audio.current;
@@ -135,7 +135,7 @@ export default function SpotifyPlayer() {
 
   return (
     <section
-      aria-label="Canción del manifiesto"
+      aria-label="Canción de la tienda"
       aria-hidden={!visible}
       inert={!visible}
       className={`sp-widget fixed bottom-3 left-3 z-[65] border-4 border-black bg-ink transition-all duration-500 ${
@@ -144,11 +144,12 @@ export default function SpotifyPlayer() {
           : "w-[min(340px,calc(100vw-1.5rem))] -rotate-1 p-3 shadow-[6px_6px_0_#2ec6ee]"
       } ${visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-[130%] opacity-0"}`}
     >
-      {/* el <audio> queda siempre montado: minimizar no corta la música */}
+      {/* el <audio> queda siempre montado: minimizar no corta la música.
+          Solo se descarga si el visitante tiene sonido (o cuando le dé play): sin sonido no gasta datos. */}
       <audio
         ref={audio}
         src={entered ? SONG_SRC : undefined}
-        preload={entered ? "auto" : "none"}
+        preload={entered && sound ? "auto" : "none"}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         onEnded={() => setPlaying(false)}

@@ -97,7 +97,7 @@ export default function Train() {
         <div className="relative z-10 mx-4 mb-8 self-start sm:mx-10">
           <h2
             id="train-title"
-            className="flicker inline-block rounded-md border-4 border-[#333] bg-black px-4 py-3 font-mono text-base font-bold uppercase tracking-[0.2em] text-[#ffb000] sm:text-xl"
+            className="flicker inline-block rounded-md border-4 border-[#333] bg-black px-4 py-3 font-body text-base font-bold uppercase tracking-[0.2em] text-[#ffb000] sm:text-xl"
             style={{
               textShadow: "0 0 8px rgba(255,176,0,.8)",
               backgroundImage: "radial-gradient(circle, rgba(255,255,255,.06) 1px, transparent 1.5px)",
@@ -114,7 +114,7 @@ export default function Train() {
           <div ref={track} className="flex w-max items-end gap-3 pl-[100vw] pr-[30vw] motion-reduce:pl-4 motion-reduce:pr-4">
             <Wagon front>
               <Image
-                src="/brand/logo-tag.png"
+                src="/brand/logo-tag.webp"
                 alt=""
                 width={880}
                 height={669}
@@ -155,7 +155,7 @@ function Wagon({ children, number, front }: { children?: React.ReactNode; number
           <div className="wagon-window" style={{ left: "8%", width: "40%", height: "30%", borderRadius: "90px 12px 12px 12px" }} />
           <div className="wagon-window" style={{ left: "74%", width: "18%" }} />
           <div
-            className="absolute left-[10%] top-[44%] rounded-sm bg-black px-2 py-1 font-mono text-[4cqw] font-bold text-[#ffb000]"
+            className="absolute left-[10%] top-[44%] rounded-sm bg-black px-2 py-1 font-body text-[4cqw] font-bold text-[#ffb000]"
             style={{ textShadow: "0 0 6px #ffb000" }}
           >
             3 ▸ TU PARED
@@ -171,7 +171,7 @@ function Wagon({ children, number, front }: { children?: React.ReactNode; number
           {DOORS.map((l) => (
             <div key={l} className="wagon-door" style={{ left: l }} />
           ))}
-          <span className="absolute right-[3%] top-[2%] font-mono text-[1.6cqw] font-bold text-[#333]">N° {number}</span>
+          <span className="absolute right-[3%] top-[2%] font-body text-[1.6cqw] font-bold text-[#333]">N° {number}</span>
         </>
       )}
       {children}
@@ -222,7 +222,7 @@ function PieceEnd() {
       <div className="absolute inset-[6%] -rotate-2 rounded-[30%] bg-[#9b5cff]" style={{ filter: "blur(4px)" }} />
       <div className="relative flex h-full items-center justify-center">
         <Image
-          src="/brand/logo-tag.png"
+          src="/brand/logo-tag.webp"
           alt="Tag dhebor en cian con contorno azul marino"
           width={880}
           height={669}

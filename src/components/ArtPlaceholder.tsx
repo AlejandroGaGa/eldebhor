@@ -41,7 +41,7 @@ export default function ArtPlaceholder({ obra, big = false }: { obra: Obra; big?
           {texto}
         </span>
       </div>
-      <span className={`absolute bottom-2 left-2 rounded-sm bg-ink/85 px-1.5 py-0.5 font-mono text-bone ${big ? "text-sm" : "text-[11px]"}`}>
+      <span className={`absolute bottom-2 left-2 rounded-sm bg-ink/85 px-1.5 py-0.5 font-body text-bone ${big ? "text-sm" : "text-[11px]"}`}>
         imagen de ejemplo
       </span>
     </div>

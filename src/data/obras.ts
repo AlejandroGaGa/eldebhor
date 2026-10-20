@@ -2,7 +2,7 @@
  * Galería de obras de ELDEBHOR.
  *
  * Para agregar una pieza: copia la foto a /public/obras/ y agrega una entrada
- * con `imagen: "/obras/archivo.jpg"` y un `alt` que describa lo que se ve.
+ * con `imagen: "/obras/archivo.webp"` y un `alt` que describa lo que se ve.
  * `anio`, `lugar` y `tecnica` son opcionales: si no los pones, no se muestran.
  * `ph` solo se usa si una obra no tiene `imagen` (dibujo de ejemplo).
  */
@@ -36,7 +36,7 @@ export const OBRAS: Obra[] = [
     tecnica: "Aerosol sobre muro",
     tipo: "Muro",
     formato: "h",
-    imagen: "/obras/mural-verde-morado.jpg",
+    imagen: "/obras/mural-verde-morado.webp",
     alt: "Letras burbuja verde fosforescente con contorno morado y estrellas, pintadas sobre un muro de ladrillo rosa",
     ph: PH,
   },
@@ -46,7 +46,7 @@ export const OBRAS: Obra[] = [
     tecnica: "Aerosol sobre muro",
     tipo: "Muro",
     formato: "v",
-    imagen: "/obras/gorila-vs-dino.jpg",
+    imagen: "/obras/gorila-vs-dino.webp",
     alt: "Mural en la calle: un gorila azul y negro frente a un dinosaurio verde, con el nombre en letras rojas y blancas en el centro y una ciudad al fondo",
     ph: PH,
   },
@@ -56,7 +56,7 @@ export const OBRAS: Obra[] = [
     tecnica: "Aerosol sobre concreto",
     tipo: "Muro",
     formato: "v",
-    imagen: "/obras/burbuja-blanca-muro.jpg",
+    imagen: "/obras/burbuja-blanca-muro.webp",
     alt: "Un escritor con sudadera negra y capucha pintando letras burbuja blancas con contorno negro sobre un muro de concreto gris",
     ph: PH,
   },
@@ -66,7 +66,7 @@ export const OBRAS: Obra[] = [
     tecnica: "Digital",
     tipo: "Boceto",
     formato: "c",
-    imagen: "/obras/tag-cian.jpg",
+    imagen: "/obras/tag-cian.webp",
     alt: "Tag en cian con extrusión morado marino, halo arriba y chorreado de pintura, sobre fondo gris",
     ph: PH,
   },
@@ -76,7 +76,7 @@ export const OBRAS: Obra[] = [
     tecnica: "Digital",
     tipo: "Boceto",
     formato: "c",
-    imagen: "/obras/tag-humo.jpg",
+    imagen: "/obras/tag-humo.webp",
     alt: "Tag con halo en blanco difuminado, como humo, con chorreados, sobre fondo negro",
     ph: PH,
   },
@@ -86,7 +86,7 @@ export const OBRAS: Obra[] = [
     tecnica: "Digital",
     tipo: "Boceto",
     formato: "h",
-    imagen: "/obras/burbuja-blanco-negro.jpg",
+    imagen: "/obras/burbuja-blanco-negro.webp",
     alt: "Letras burbuja blancas con contorno negro y destellos, sobre fondo negro",
     ph: PH,
   },
@@ -96,7 +96,7 @@ export const OBRAS: Obra[] = [
     tecnica: "Digital",
     tipo: "Boceto",
     formato: "v",
-    imagen: "/obras/wildstyle-cian-rojo.jpg",
+    imagen: "/obras/wildstyle-cian-rojo.webp",
     alt: "Wildstyle vertical en cian claro con contorno azul, hojas verdes y una calavera roja con corona, sobre fondo rojo",
     ph: PH,
   },

@@ -294,7 +294,7 @@ function Sticker({ kind, color }: { kind: Kind; color: string }) {
         <div className={`${base} flex flex-col overflow-hidden rounded-xl bg-white`}>
           <div className="bg-[#e3122b] px-2 pb-1 pt-2 text-center leading-none text-white">
             <div className="font-block text-3xl">HELLO</div>
-            <div className="font-mono text-xs font-bold uppercase">my name is</div>
+            <div className="font-body text-xs font-bold uppercase">my name is</div>
           </div>
           <div className="flex flex-1 items-center justify-center font-tag text-5xl text-black">eldebhor</div>
         </div>
@@ -369,18 +369,18 @@ function Sticker({ kind, color }: { kind: Kind; color: string }) {
           style={{ background: "radial-gradient(circle, #e7c35a 0 55%, #c9ced6 56% 100%)" }}
         >
           <span className="font-block text-4xl leading-none">$20</span>
-          <span className="font-mono text-[11px] font-bold uppercase">para comer</span>
+          <span className="font-body text-[11px] font-bold uppercase">para comer</span>
         </div>
       );
     case "payaso":
-      return <Image src="/stickers/payaso-arcoiris.png" alt="" width={420} height={535} draggable={false} className="h-full w-full object-contain [filter:drop-shadow(3px_0_0_#fff)_drop-shadow(-3px_0_0_#fff)_drop-shadow(0_3px_0_#fff)_drop-shadow(0_-3px_0_#fff)_drop-shadow(5px_6px_0_rgba(0,0,0,.5))]" />;
+      return <Image src="/stickers/payaso-arcoiris.webp" alt="" width={420} height={535} draggable={false} className="h-full w-full object-contain [filter:drop-shadow(3px_0_0_#fff)_drop-shadow(-3px_0_0_#fff)_drop-shadow(0_3px_0_#fff)_drop-shadow(0_-3px_0_#fff)_drop-shadow(5px_6px_0_rgba(0,0,0,.5))]" />;
     case "logo":
-      return <Image src="/brand/logo-tag.png" alt="" width={880} height={669} draggable={false} className="h-full w-full object-contain [filter:drop-shadow(3px_0_0_#fff)_drop-shadow(-3px_0_0_#fff)_drop-shadow(0_3px_0_#fff)_drop-shadow(0_-3px_0_#fff)_drop-shadow(5px_6px_0_rgba(0,0,0,.5))]" />;
+      return <Image src="/brand/logo-tag.webp" alt="" width={880} height={669} draggable={false} className="h-full w-full object-contain [filter:drop-shadow(3px_0_0_#fff)_drop-shadow(-3px_0_0_#fff)_drop-shadow(0_3px_0_#fff)_drop-shadow(0_-3px_0_#fff)_drop-shadow(5px_6px_0_rgba(0,0,0,.5))]" />;
     case "color":
       return (
         <div className={`${base} flex flex-col items-center justify-center rounded-2xl`} style={{ background: color, color: readable(color) }}>
           <span className="font-tag text-4xl leading-none">tu color</span>
-          <span className="font-mono text-sm font-bold">{color.toUpperCase()}</span>
+          <span className="font-body text-sm font-bold">{color.toUpperCase()}</span>
         </div>
       );
   }
@@ -391,19 +391,19 @@ function Posters() {
     <div className="pointer-events-none absolute inset-0" aria-hidden="true">
       <div className="torn absolute right-[6%] top-[8%] w-56 rotate-3 bg-[#f1e9d2] p-5 text-ink shadow-xl sm:w-72">
         <p className="font-block text-3xl leading-none">SE BUSCA</p>
-        <p className="mt-2 font-mono text-sm font-bold">PARED LIBRE, GRIS, ABURRIDA. RECOMPENSA: COLOR.</p>
+        <p className="mt-2 font-body text-sm font-bold">PARED LIBRE, GRIS, ABURRIDA. RECOMPENSA: COLOR.</p>
       </div>
       <div className="torn absolute left-[38%] top-[30%] hidden w-64 -rotate-2 bg-[#ff6a00] p-5 text-ink shadow-xl md:block">
         <p className="font-tag text-5xl leading-none">clases de letras</p>
-        <p className="mt-2 font-mono text-sm font-bold">MARTES 3 AM · TRAER LATA</p>
+        <p className="mt-2 font-body text-sm font-bold">MARTES 3 AM · TRAER LATA</p>
       </div>
       <div className="torn absolute bottom-[34%] left-[6%] hidden w-60 rotate-[-6deg] bg-[#00c2ff] p-5 text-ink shadow-xl sm:block">
         <p className="font-spray text-4xl leading-none">NO FIJAR CARTELES</p>
       </div>
       <div className="torn absolute right-[20%] top-[46%] w-56 rotate-6 bg-ink p-5 text-bone shadow-xl">
-        <p className="font-mono text-sm font-bold text-taxi">HOY · EN VIVO</p>
+        <p className="font-body text-sm font-bold text-taxi">HOY · EN VIVO</p>
         <p className="font-wet text-4xl leading-none">ELDEBHOR</p>
-        <p className="font-mono text-sm">en todas partes</p>
+        <p className="font-body text-sm">en todas partes</p>
       </div>
     </div>
   );

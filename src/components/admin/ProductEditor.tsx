@@ -36,6 +36,7 @@ export default function ProductEditor({ producto, onCancel, onSaved, onDeleted }
   const [etiqueta, setEtiqueta] = useState(p?.etiqueta ?? "");
   const [agotado, setAgotado] = useState(p?.agotado === true);
   const [visible, setVisible] = useState(p?.visible !== false);
+  const [destacado, setDestacado] = useState(p?.destacado === true);
   const [imagen, setImagen] = useState(p?.imagen ?? "");
   const [alt, setAlt] = useState(p?.alt ?? "");
   const [enOferta, setEnOferta] = useState(!!p?.oferta);
@@ -99,6 +100,7 @@ export default function ProductEditor({ producto, onCancel, onSaved, onDeleted }
       etiqueta: etiqueta.trim() || undefined,
       agotado,
       visible,
+      destacado,
       imagen: imagen || undefined,
       alt: alt || undefined,
       oferta: enOferta ? { precio: on, ...(ofHasta ? { hasta: ofHasta } : {}) } : undefined,
@@ -273,6 +275,11 @@ export default function ProductEditor({ producto, onCancel, onSaved, onDeleted }
           <input type="checkbox" checked={visible} onChange={(e) => setVisible(e.target.checked)} className="h-6 w-6 accent-[#2ec6ee]" />
           Mostrar en el sitio
         </label>
+        <label className="flex min-h-[48px] cursor-pointer items-center gap-3 text-base font-bold">
+          <input type="checkbox" checked={destacado} onChange={(e) => setDestacado(e.target.checked)} className="h-6 w-6 accent-[#2ec6ee]" />
+          Pieza de portada (se vende arriba de todo, junto a la foto grande)
+        </label>
+        <p className={ui.hint}>Si varias lo tienen marcado, sale la primera de la lista.</p>
       </fieldset>
 
       {error && <p className={ui.error} role="alert">{error}</p>}

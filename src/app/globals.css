@@ -6,7 +6,7 @@
   --font-marker: var(--ff-marker);
   --font-wet: var(--ff-wet);
   --font-spray: var(--ff-spray);
-  --font-mono: var(--ff-mono);
+  --font-body: var(--ff-body);
 
   --color-ink: #121110;
   --color-bone: #f4f1ea;
@@ -46,8 +46,9 @@ html.lenis body {
 body {
   background: var(--color-ink);
   color: var(--color-bone);
-  font-family: var(--ff-mono), ui-monospace, monospace;
-  font-size: 1rem;
+  font-family: var(--ff-body), system-ui, sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 500;
   overflow-x: clip;
 }
 

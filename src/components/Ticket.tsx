@@ -44,7 +44,7 @@ export default function Ticket() {
       <div className="relative mx-auto w-full max-w-sm">
         <div
           data-paper
-          className="relative rotate-2 bg-[#f7f5ef] px-6 pb-10 pt-6 font-mono text-[15px] text-ink shadow-[10px_12px_0_rgba(0,0,0,.5)]"
+          className="relative rotate-2 bg-[#f7f5ef] px-6 pb-10 pt-6 font-body text-[15px] text-ink shadow-[10px_12px_0_rgba(0,0,0,.5)]"
           style={{
             maskImage: "radial-gradient(circle at 10px 100%, transparent 9px, #000 9.5px)",
             maskSize: "20px 100%",
@@ -108,7 +108,7 @@ export default function Ticket() {
           style={{ background: "radial-gradient(circle, #e7c35a 0 55%, #c9ced6 56% 100%)", rotate: "12deg" }}
         >
           <span className="font-block text-4xl leading-none">20</span>
-          <span className="font-mono text-[11px] font-bold uppercase">varos</span>
+          <span className="font-body text-[11px] font-bold uppercase">varos</span>
         </div>
       </div>
     </div>

@@ -161,7 +161,7 @@ export default function Cursor() {
       </div>
       <div ref={dot} className="pointer-events-none invisible fixed left-0 top-0 z-[161] -ml-[22px] -mt-7 h-14 w-[44px] opacity-0">
         <Image
-          src="/stickers/payaso-arcoiris.png"
+          src="/stickers/payaso-arcoiris.webp"
           alt=""
           width={420}
           height={535}

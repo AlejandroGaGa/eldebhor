@@ -84,7 +84,7 @@ export default function Manifesto() {
 
   return (
     <section ref={root} id="manifiesto" className="concrete relative overflow-x-clip px-4 pb-24 pt-40 sm:px-10 sm:pb-36 sm:pt-56" aria-labelledby="manifesto-title">
-      <h2 id="manifesto-title" className="mx-auto mb-8 max-w-6xl font-mono text-base uppercase tracking-[0.35em] text-taxi">
+      <h2 id="manifesto-title" className="mx-auto mb-8 max-w-6xl font-body text-base uppercase tracking-[0.35em] text-taxi">
         ✦ Manifiesto 001
       </h2>
       <p data-mtext className="relative mx-auto max-w-6xl font-block text-[clamp(2.1rem,7.4vw,6.2rem)] uppercase leading-[1.08]">
@@ -124,7 +124,7 @@ export default function Manifesto() {
           «Hoy voy a comer con estos <mark className="rounded-sm bg-brand px-2 text-ink">20 varos</mark>, porque todo mi dinero que tenía, me lo gasté
           pintando y poniéndome bien pedote.»
         </blockquote>
-        <figcaption className="mt-5 font-mono text-base font-bold uppercase">— ELDEBHOR</figcaption>
+        <figcaption className="mt-5 font-body text-base font-bold uppercase">— ELDEBHOR</figcaption>
       </figure>
 
       <ul data-stats className="mx-auto mt-20 grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-8">
@@ -139,7 +139,7 @@ export default function Manifesto() {
               <span data-count={s.n}>{s.n}</span>
               {s.suffix}
             </p>
-            <p className="mt-2 font-mono text-base font-bold uppercase">{s.label}</p>
+            <p className="mt-2 font-body text-base font-bold uppercase">{s.label}</p>
           </li>
         ))}
       </ul>

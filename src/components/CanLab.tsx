@@ -12,7 +12,7 @@ import SplitWords from "./SplitWords";
 
 const CanScene = dynamic(() => import("./CanScene"), {
   ssr: false,
-  loading: () => <div className="flex h-full items-center justify-center font-mono text-base">cargando lata 3D…</div>,
+  loading: () => <div className="flex h-full items-center justify-center font-body text-base">cargando lata 3D…</div>,
 });
 
 function inkFor(hex: string) {
@@ -103,7 +103,7 @@ export default function CanLab() {
           </p>
 
           <fieldset className="mt-8">
-            <legend className="mb-3 font-mono text-base font-bold uppercase tracking-widest">Color · {colorName}</legend>
+            <legend className="mb-3 font-body text-base font-bold uppercase tracking-widest">Color · {colorName}</legend>
             <div className="flex flex-wrap gap-3">
               {PALETTE.map((p, i) => {
                 const checked = p.hex === color;

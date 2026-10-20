@@ -100,39 +100,54 @@ export default function Loader() {
       aria-labelledby="loader-title"
       className="fixed inset-0 z-[100] overflow-hidden"
     >
-      <div data-loader-body className="concrete absolute inset-0 flex flex-col items-center justify-center gap-6 px-4 pb-[env(safe-area-inset-bottom)]">
+      <div data-loader-body className="concrete absolute inset-0 flex flex-col items-center justify-center gap-4 overflow-y-auto px-4 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] [@media(max-height:760px)]:justify-start">
         <div ref={pops} className="pointer-events-none absolute inset-0" aria-hidden="true" />
         <Image
-          src="/brand/logo-tag.png"
+          src="/brand/logo-tag.webp"
           alt="ELDEBHOR"
           width={880}
           height={669}
           priority
-          className="h-auto w-36 sm:w-56 [@media(max-height:720px)]:hidden"
+          className="h-auto w-28 sm:w-40 [@media(max-height:820px)]:hidden"
         />
-        <div ref={can} className="w-24 sm:w-32" style={{ transformOrigin: "50% 60%" }}>
+        <div ref={can} className="w-16 shrink-0 sm:w-24" style={{ transformOrigin: "50% 60%" }}>
           <SprayCanIcon color="#2ec6ee" className="h-auto w-full drop-shadow-[8px_10px_0_rgba(0,0,0,.6)]" />
         </div>
-        <h1 id="loader-title" className="text-center font-mono text-base uppercase tracking-[0.3em] text-bone">
+        <h1 id="loader-title" className="text-center font-body text-base uppercase tracking-[0.3em] text-bone">
           {ready ? "La lata está lista" : "Agitando la lata"}
         </h1>
         <p
-          className="font-wet text-7xl leading-none text-brand sm:text-9xl"
+          className="font-wet text-6xl leading-none text-brand sm:text-8xl [@media(max-height:640px)]:text-5xl"
           style={{ textShadow: "5px 5px 0 #ff2e88, 10px 10px 0 #000" }}
           aria-live="polite"
         >
           {pct}%
         </p>
+        {/* aviso de la canción: siempre visible al llegar, para que nadie se lleve el susto del volumen */}
+        <div
+          role="note"
+          aria-labelledby="aviso-rola"
+          className={`w-full max-w-md -rotate-1 border-4 border-black bg-taxi px-4 py-3 text-ink shadow-[6px_6px_0_#000] transition-opacity duration-300 ${ready ? "opacity-100" : "opacity-0"}`}
+        >
+          <p id="aviso-rola" className="font-block text-base leading-tight sm:text-lg">
+            ⚠ Esta página tiene la rola oficial de ELDEBHOR
+          </p>
+          <p className="mt-1 text-base leading-snug">
+            Tú eliges si suena o no. Si entras con sonido, la canción arranca <strong className="uppercase">de inmediato y con el volumen alto</strong>: baja el
+            volumen o ponte audífonos antes.
+          </p>
+        </div>
         <div className={`flex w-full max-w-md flex-col gap-3 transition-opacity duration-300 sm:flex-row ${ready ? "opacity-100" : "pointer-events-none opacity-0"}`}>
           <button
             ref={firstBtn}
             type="button"
             disabled={!ready}
             onClick={() => enter(true)}
-            data-cursor="VAMOS"
+            data-cursor="¡FUERTE!"
+            aria-label="Entrar con sonido: la canción empieza de inmediato y con el volumen alto"
             className="min-h-[52px] flex-1 -rotate-2 border-4 border-black bg-brand px-5 py-3 font-block text-base text-ink shadow-[6px_6px_0_#000] transition-transform hover:-rotate-3 hover:scale-105 active:translate-x-1 active:translate-y-1 active:shadow-none"
           >
-            Entrar con sonido
+            🔊 Entrar con sonido
           </button>
           <button
             type="button"
@@ -141,13 +156,13 @@ export default function Loader() {
             data-cursor="SHH"
             className="min-h-[52px] flex-1 rotate-1 border-4 border-black bg-bone px-5 py-3 font-block text-base text-ink shadow-[6px_6px_0_#000] transition-transform hover:rotate-2 hover:scale-105 active:translate-x-1 active:translate-y-1 active:shadow-none"
           >
-            Sin sonido
+            Entrar sin sonido
           </button>
         </div>
-        <p className="max-w-sm text-center text-sm text-bone/80">
-          Experiencia interactiva hecha con 20 varos. Mejor con audífonos y con el mouse en la mano.
+        <p className="max-w-sm text-center text-sm text-bone/80 [@media(max-height:640px)]:hidden">
+          Puedes cambiar de opinión cuando quieras con el botón de sonido de la barra de arriba. Recordamos tu elección con una cookie (solo
+          guarda si quieres sonido o no).
         </p>
-        <p className="max-w-sm text-center text-xs text-bone/70">Recordamos tu elección con una cookie (solo guarda si quieres sonido o no) para no volver a preguntarte.</p>
       </div>
       <div ref={stripes} className="pointer-events-none absolute inset-0 opacity-0" aria-hidden="true">
         {PALETTE.slice(0, 6).map((p, i) => (
