@@ -22,6 +22,7 @@ import Merch from "./Merch";
 import LazySection from "./LazySection";
 import Footer from "./Footer";
 import SubirBtn from "./SubirBtn";
+import { ToldoFijo } from "./Fachada";
 import type { Producto } from "@/data/merch";
 import type { Promo } from "@/lib/offers";
 
@@ -153,6 +154,7 @@ export default function Experience({ products, promo }: { products: Producto[]; 
         </LazySection>
         <Footer />
       </main>
+      <ToldoFijo />
       <SubirBtn />
       <Cursor />
       <div className="grain" aria-hidden="true" />

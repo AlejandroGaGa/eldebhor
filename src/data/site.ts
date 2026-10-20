@@ -8,7 +8,7 @@ export const INSTAGRAM = "eldhebor";
 export const igProfile = `https://instagram.com/${INSTAGRAM}`;
 
 /** Crédito del desarrollador (perfil personal). */
-export const DEV_NAME = "Alejandro García Gallardo";
+export const DEV_NAME = "GAGA";
 export const DEV_INSTAGRAM = "gagaeldev";
 export const devProfile = `https://instagram.com/${DEV_INSTAGRAM}`;
 

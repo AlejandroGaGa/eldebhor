@@ -112,6 +112,36 @@ export default function SpotifyPlayer() {
 
   const visible = shown && !closed;
 
+  // Posición: abierto vive abajo a la izquierda; minimizado viaja (animado) a la esquina superior derecha,
+  // justo debajo de los botones de la barra, para no estorbar al navegar.
+  const box = useRef<HTMLElement>(null);
+  const [pos, setPos] = useState({ x: 12, y: 0 });
+  useEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    const place = () => {
+      const w = el.offsetWidth;
+      const h = el.offsetHeight;
+      const margen = window.innerWidth >= 640 ? 20 : 12;
+      if (minimized) {
+        const hud = document.getElementById("hud")?.querySelector("div");
+        const top = (hud?.getBoundingClientRect().bottom ?? 72) + 4;
+        setPos({ x: window.innerWidth - w - margen, y: top });
+      } else {
+        const safe = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--sab") || "0") || 0;
+        setPos({ x: margen, y: window.innerHeight - h - margen - safe });
+      }
+    };
+    place();
+    const ro = new ResizeObserver(place);
+    ro.observe(el);
+    window.addEventListener("resize", place);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", place);
+    };
+  }, [minimized, visible]);
+
   const playBtn = (
     <button
       type="button"
@@ -135,14 +165,14 @@ export default function SpotifyPlayer() {
 
   return (
     <section
+      ref={box}
       aria-label="Canción de la tienda"
       aria-hidden={!visible}
       inert={!visible}
-      className={`sp-widget fixed bottom-3 left-3 z-[65] border-4 border-black bg-ink transition-all duration-500 ${
-        minimized
-          ? "rounded-full p-1.5 shadow-[4px_4px_0_#2ec6ee]"
-          : "w-[min(340px,calc(100vw-1.5rem))] -rotate-1 p-3 shadow-[6px_6px_0_#2ec6ee]"
-      } ${visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-[130%] opacity-0"}`}
+      style={{ transform: `translate(${pos.x}px, ${visible ? pos.y : pos.y + 200}px)` }}
+      className={`sp-widget fixed left-0 top-0 z-[65] border-4 border-black bg-ink transition-[transform,opacity,box-shadow,border-radius] duration-700 ease-[cubic-bezier(.2,.9,.3,1.1)] motion-reduce:transition-none ${
+        minimized ? "rounded-full p-1.5 shadow-[4px_4px_0_#2ec6ee]" : "w-[min(340px,calc(100vw-1.5rem))] p-3 shadow-[6px_6px_0_#2ec6ee]"
+      } ${visible ? "opacity-100" : "pointer-events-none opacity-0"}`}
     >
       {/* el <audio> queda siempre montado: minimizar no corta la música.
           Solo se descarga si el visitante tiene sonido (o cuando le dé play): sin sonido no gasta datos. */}

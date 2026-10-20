@@ -1,5 +1,18 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
+/** El toldo de rayas con su orilla ondulada (se usa en la fachada y en la copia fija de arriba). */
+export function Toldo({ className = "" }: { className?: string }) {
+  return (
+    <div aria-hidden="true" className={`relative h-12 border-b-4 border-black sm:h-16 ${className}`} style={{ backgroundImage: "repeating-linear-gradient(90deg, #2ec6ee 0 48px, #f4f1ea 48px 96px)", boxShadow: "inset 0 -14px 24px rgba(0,0,0,.35)" }}>
+      <svg viewBox="0 0 960 24" preserveAspectRatio="none" className="absolute inset-x-0 -bottom-[22px] h-6 w-full">
+        <path d="M0 0 H960 V4 C940 24 920 24 900 4 C880 24 860 24 840 4 C820 24 800 24 780 4 C760 24 740 24 720 4 C700 24 680 24 660 4 C640 24 620 24 600 4 C580 24 560 24 540 4 C520 24 500 24 480 4 C460 24 440 24 420 4 C400 24 380 24 360 4 C340 24 320 24 300 4 C280 24 260 24 240 4 C220 24 200 24 180 4 C160 24 140 24 120 4 C100 24 80 24 60 4 C40 24 20 24 0 4Z" fill="#2ec6ee" stroke="#000" strokeWidth="4" />
+      </svg>
+    </div>
+  );
+}
+
 /**
  * Fachada de miscelánea de esquina, grafiteada: cortina de acero medio subida, rótulo pintado a mano
  * «MISCELÁNEA EL DEBHOR», toldo de rayas y el letrero de ABIERTO colgando. Corona la portada para que
@@ -47,10 +60,8 @@ export default function Fachada() {
       </div>
 
       {/* toldo de rayas con orilla ondulada */}
-      <div aria-hidden="true" className="relative h-12 border-b-4 border-black sm:h-16" style={{ backgroundImage: "repeating-linear-gradient(90deg, #2ec6ee 0 48px, #f4f1ea 48px 96px)", boxShadow: "inset 0 -14px 24px rgba(0,0,0,.35)" }}>
-        <svg viewBox="0 0 960 24" preserveAspectRatio="none" className="absolute inset-x-0 -bottom-[22px] h-6 w-full">
-          <path d="M0 0 H960 V4 C940 24 920 24 900 4 C880 24 860 24 840 4 C820 24 800 24 780 4 C760 24 740 24 720 4 C700 24 680 24 660 4 C640 24 620 24 600 4 C580 24 560 24 540 4 C520 24 500 24 480 4 C460 24 440 24 420 4 C400 24 380 24 360 4 C340 24 320 24 300 4 C280 24 260 24 240 4 C220 24 200 24 180 4 C160 24 140 24 120 4 C100 24 80 24 60 4 C40 24 20 24 0 4Z" fill="#2ec6ee" stroke="#000" strokeWidth="4" />
-        </svg>
+      <div id="toldo">
+        <Toldo />
       </div>
 
       {/* letrero colgando */}
@@ -65,6 +76,30 @@ export default function Fachada() {
           </p>
         </div>
       </div>
+    </div>
+  );
+}
+
+/**
+ * Copia fija del toldo: cuando el de la fachada sale por arriba de la pantalla, esta baja y se queda
+ * de fondo bajo la barra, como si siguieras bajo la tienda. Va fuera de <main> para quedar sobre todas
+ * las secciones.
+ */
+export function ToldoFijo() {
+  const [fijo, setFijo] = useState(false);
+  useEffect(() => {
+    const el = document.getElementById("toldo");
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setFijo(!e.isIntersecting && e.boundingClientRect.top < 0), { threshold: 0 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div
+      aria-hidden="true"
+      className={`pointer-events-none fixed inset-x-0 top-0 z-[55] transition-transform duration-500 ease-out motion-reduce:transition-none ${fijo ? "translate-y-0" : "-translate-y-[calc(100%_+_24px)]"}`}
+    >
+      <Toldo />
     </div>
   );
 }

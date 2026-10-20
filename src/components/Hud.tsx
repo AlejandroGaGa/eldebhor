@@ -34,7 +34,7 @@ export default function Hud() {
   };
 
   return (
-    <div ref={root} className="invisible pointer-events-none fixed inset-x-0 top-0 z-[60] opacity-0">
+    <div ref={root} id="hud" className="invisible pointer-events-none fixed inset-x-0 top-0 z-[60] opacity-0">
       <div className="flex items-start justify-between gap-2 p-3 sm:p-5">
         <button
           type="button"
