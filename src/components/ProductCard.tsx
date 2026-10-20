@@ -133,8 +133,11 @@ export function BotonPedir({ p, pedir, big }: { p: Producto; pedir: () => void; 
 }
 
 /**
- * Botón «Ver cómo funciona» + el clip del producto. En la tarjeta se incrusta en el lugar de la foto;
- * en la ficha de portada va debajo de la descripción. Nada se reproduce hasta que la persona lo pide.
+ * El video «cómo funciona» de un producto. Mientras está cerrado se ve como un video de verdad, no como
+ * un botón perdido: un círculo de play grande latiendo en el centro, una franja «▶ Mira cómo funciona»
+ * abajo y una etiqueta «VIDEO» arriba. Tocar en cualquier parte lo reproduce (nada se reproduce solo).
+ * - En la tarjeta cubre el recuadro de la foto (el video se reproduce ahí mismo).
+ * - En la ficha de portada (`big`) es un recuadro propio con la foto del producto de fondo.
  */
 export function VideoDemo({ p, onToggle, big }: { p: Producto; onToggle?: (abierto: boolean) => void; big?: boolean }) {
   const id = useId();
@@ -146,21 +149,45 @@ export function VideoDemo({ p, onToggle, big }: { p: Producto; onToggle?: (abier
     onToggle?.(next);
     blip(next ? 700 : 400);
   };
-  // en la tarjeta el botón flota sobre la foto (abajo a la derecha; arriba cuando el video está abierto, para no tapar sus controles)
-  const pos = big ? "" : abierto ? "absolute right-2 top-2 z-30" : "absolute bottom-2 right-2 z-20";
+  const caja = big ? "relative aspect-video w-full overflow-hidden border-4 border-black bg-ink shadow-[6px_6px_0_#121110]" : "absolute inset-0 z-10";
+
   return (
-    <div className={big ? "space-y-3" : "contents"}>
-      <button
-        type="button"
-        onClick={toggle}
-        aria-expanded={abierto}
-        aria-controls={`${id}-video`}
-        data-cursor={abierto ? "CERRAR" : "PLAY"}
-        className={`${pos} inline-flex min-h-[48px] items-center justify-center gap-2 rounded-sm border-[3px] border-black bg-taxi px-4 font-block text-ink shadow-[4px_4px_0_#000] transition-transform hover:-rotate-1 active:translate-x-1 active:translate-y-1 active:shadow-none ${big ? "text-lg" : "text-base"}`}
-      >
-        <span aria-hidden="true">{abierto ? "■" : "▶"}</span> {abierto ? "Cerrar video" : "Ver cómo funciona"}
-      </button>
-      <div id={`${id}-video`} hidden={!abierto} className={big ? "overflow-hidden border-4 border-black bg-black" : "absolute inset-0 z-10 bg-black"}>
+    <div className={caja}>
+      {big && p.imagen && !abierto && (
+        <Image src={p.imagen} alt="" fill sizes="(min-width:1024px) 560px, 92vw" unoptimized={p.imagen.startsWith("/api/img/")} className="object-cover opacity-70" aria-hidden="true" />
+      )}
+      {!abierto ? (
+        <button
+          type="button"
+          onClick={toggle}
+          aria-expanded={false}
+          aria-controls={`${id}-video`}
+          data-cursor="PLAY"
+          className="group/play absolute inset-0 flex flex-col items-center justify-center bg-ink/25 text-ink transition-colors hover:bg-ink/40 focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-[-4px] focus-visible:outline-taxi"
+        >
+          <span className="absolute bottom-14 left-2 -rotate-3 border-[3px] border-black bg-bone px-2 py-0.5 font-body text-xs font-bold uppercase tracking-[0.25em] shadow-[3px_3px_0_#000]">
+            🎬 Video
+          </span>
+          <span aria-hidden="true" className="play-pulse flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full border-4 border-black bg-taxi text-3xl shadow-[4px_4px_0_#000] transition-transform group-hover/play:scale-110 sm:h-20 sm:w-20">
+            <span className="translate-x-0.5">▶</span>
+          </span>
+          <span className={`absolute inset-x-0 bottom-0 flex min-h-[48px] items-center justify-center gap-2 border-t-4 border-black bg-taxi px-3 font-block text-ink ${big ? "text-lg sm:text-xl" : "text-base"}`}>
+            ▶ Mira cómo funciona
+          </span>
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={toggle}
+          aria-expanded={true}
+          aria-controls={`${id}-video`}
+          data-cursor="CERRAR"
+          className="absolute right-2 top-2 z-30 inline-flex min-h-[44px] items-center gap-2 rounded-sm border-[3px] border-black bg-taxi px-3 font-block text-base text-ink shadow-[4px_4px_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none"
+        >
+          <span aria-hidden="true">✕</span> Cerrar
+        </button>
+      )}
+      <div id={`${id}-video`} hidden={!abierto} className="absolute inset-0 bg-black">
         {abierto && (
           <video src={p.video} controls autoPlay playsInline preload="metadata" className="h-full w-full object-contain" aria-label={`Video: cómo funciona ${p.nombre}`}>
             Tu navegador no reproduce este video.
@@ -200,12 +227,12 @@ export default function ProductCard({ p, onToast }: { p: Producto; onToast: (m: 
           {!p.imagen && <span className="absolute bottom-2 left-2 rounded-sm bg-ink/85 px-1.5 py-0.5 font-body text-[11px] text-bone">imagen de ejemplo</span>}
           {p.video && <VideoDemo p={p} />}
           {enOferta && !p.agotado && (
-            <span className="absolute left-2 top-2 -rotate-3 border-4 border-black bg-[#c10f24] px-3 py-1 font-block text-lg text-white shadow-[3px_3px_0_#000]">
+            <span className="absolute left-2 top-2 z-20 -rotate-3 border-4 border-black bg-[#c10f24] px-3 py-1 font-block text-lg text-white shadow-[3px_3px_0_#000]">
               Oferta −{descuento(p)}%
             </span>
           )}
           {p.agotado && (
-            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-12 border-4 border-[#e3122b] bg-white/90 px-4 py-1 font-block text-3xl text-[#c10f24]">
+            <span className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 -rotate-12 border-4 border-[#e3122b] bg-white/90 px-4 py-1 font-block text-3xl text-[#c10f24]">
               Agotado
             </span>
           )}

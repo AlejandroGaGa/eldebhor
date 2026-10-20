@@ -107,6 +107,7 @@ export default function ProductsPanel() {
                     </span>
                   )}
                   {p.oferta && !oferta && <span className="rounded bg-bone/20 px-2 py-0.5">Oferta vencida</span>}
+                  {p.video && <span className="rounded bg-taxi px-2 py-0.5 text-ink">🎬 Con video</span>}
                   {p.agotado && <span className="rounded bg-bone px-2 py-0.5 text-ink">Agotado</span>}
                   {p.visible === false && <span className="rounded bg-bone/20 px-2 py-0.5">Oculto en el sitio</span>}
                 </p>

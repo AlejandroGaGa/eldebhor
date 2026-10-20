@@ -16,12 +16,12 @@ export function Toldo({ className = "" }: { className?: string }) {
 
 /**
  * Fachada de miscelánea de esquina, grafiteada: cortina de acero medio subida, rótulo pintado a mano
- * «MISCELÁNEA EL DEBHOR», toldo de rayas y el letrero de ABIERTO colgando. Corona la portada para que
- * se entienda de entrada que esto es la tienda del debhor.
+ * «La tiendita del debhor» (con el logo chiquito a un lado, como sello), toldo de rayas y el letrero de
+ * ABIERTO colgando. Corona la portada para que se entienda de entrada que esto es la tienda del debhor.
  */
 export default function Fachada() {
   return (
-    <div className="relative z-10 select-none" aria-label="Miscelánea EL DEBHOR, la tienda del debhor. Abierto: pide por WhatsApp.">
+    <div className="relative z-10 select-none" aria-label="La tiendita del debhor. Abierto: pide por WhatsApp.">
       {/* cortina de acero enrollada (solo los primeros pliegues asoman) */}
       <div aria-hidden="true" className="h-16 border-b-4 border-black bg-[#3a3835] sm:h-20" style={{ backgroundImage: "repeating-linear-gradient(180deg, #4a4744 0 7px, #2b2927 7px 9px, #5a5754 9px 11px, #3a3835 11px 16px)" }} />
       {/* rodillo */}
@@ -45,24 +45,23 @@ export default function Fachada() {
         </svg>
 
         <div className="relative mx-auto flex max-w-7xl flex-col items-center text-center">
-          <p className="-rotate-1 font-marker text-lg uppercase tracking-[0.35em] text-[#c10f24] sm:text-2xl" style={{ textShadow: "1px 1px 0 #000" }}>
-            Miscelánea de
-          </p>
-          <h1 id="hero-title" aria-label="ELDEBHOR" className="mt-1 select-none">
+          {/* el rótulo: el logo chiquito, como sello, y el nombre pintado a mano bien grande */}
+          <h1 id="hero-title" className="flex flex-col items-center gap-1 sm:flex-row sm:items-center sm:gap-4">
             <Image
               src="/brand/logo-tag.webp"
-              alt=""
+              alt="ELDEBHOR"
               width={880}
               height={669}
               priority
-              sizes="(min-width: 1024px) 420px, 62vw"
-              className="h-auto w-[min(62vw,15rem)] drop-shadow-[5px_6px_0_rgba(0,0,0,.35)] sm:w-[18rem] lg:w-[22rem]"
+              sizes="(min-width: 640px) 96px, 72px"
+              className="h-auto w-[4.5rem] -rotate-6 drop-shadow-[3px_3px_0_rgba(0,0,0,.35)] sm:w-24"
               draggable={false}
             />
+            <span className="-rotate-1 font-marker text-[2rem] leading-none text-ink sm:text-5xl lg:text-6xl" style={{ textShadow: "2px 2px 0 #fff, 4px 4px 0 rgba(0,0,0,.25)" }}>
+              La tiendita <span className="text-[#c10f24]">del debhor</span>
+            </span>
           </h1>
-          <p className="mt-2 rotate-[0.5deg] font-marker text-base text-ink sm:text-xl">
-            Pintura ✦ Chorreadores ✦ Estampas ✦ Merch <span className="text-[#c10f24]">— la tienda del debhor</span>
-          </p>
+          <p className="mt-2 rotate-[0.5deg] font-marker text-base text-ink sm:text-xl">Pintura ✦ Chorreadores ✦ Estampas ✦ Merch</p>
         </div>
       </div>
 
