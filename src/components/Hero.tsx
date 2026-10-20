@@ -70,7 +70,7 @@ export default function Hero({ products, promo }: { products: Producto[]; promo:
         x crew: nadie x
       </span>
 
-      <div className="pointer-events-none relative z-10 mx-auto flex max-w-7xl flex-col justify-center gap-6 px-4 pb-14 pt-28 sm:px-10 sm:pt-24 lg:gap-8">
+      <div className="pointer-events-none relative z-10 mx-auto flex max-w-7xl flex-col justify-center gap-6 px-4 pb-14 pt-32 sm:px-10 lg:gap-8">
         {/* foto grande + ficha */}
         <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:gap-10">
           <figure data-hero-foto className="invisible relative mx-auto w-full max-w-[36rem] border-4 border-black bg-white shadow-[6px_6px_0_#121110] sm:-rotate-2 sm:shadow-[10px_10px_0_#121110] lg:max-w-none">
@@ -102,8 +102,8 @@ export default function Hero({ products, promo }: { products: Producto[]; promo:
               />
             </div>
             <figcaption className="flex items-center justify-between gap-3 border-t-4 border-black bg-bone px-4 py-2 font-marker text-base text-ink sm:text-lg">
-              <span>Chorreadores: la pintura y la botella</span>
-              <span className="font-body text-sm font-bold uppercase tracking-[0.2em]">12 colores</span>
+              <span>La pintura y la botella</span>
+              <span className="whitespace-nowrap font-body text-sm font-bold uppercase tracking-[0.2em]">12 colores</span>
             </figcaption>
           </figure>
 

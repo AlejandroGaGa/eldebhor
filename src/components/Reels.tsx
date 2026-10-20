@@ -36,7 +36,8 @@ function useEmbedJs() {
 
 /**
  * Carrusel de reels de Instagram del debhor. Cada reel es el embed oficial (blockquote + embed.js), así
- * se reproduce ahí mismo y con el conteo real de likes. Se desliza con el dedo (scroll-snap) o con las
+ * se reproduce ahí mismo y con el conteo real de likes. En celular cada tarjeta se centra al deslizar;
+ * en escritorio van alineadas con la columna de texto. Se desliza con el dedo (scroll-snap) o con las
  * flechas; la sección entera se monta tarde (LazySection) para no cargar Instagram si nadie baja hasta aquí.
  */
 export default function Reels({ reels }: { reels: string[] }) {
@@ -97,12 +98,12 @@ export default function Reels({ reels }: { reels: string[] }) {
       {/* pista */}
       <ul
         ref={pista}
-        className="mt-10 flex snap-x snap-mandatory gap-6 overflow-x-auto px-[max(1rem,calc(50vw-10.5rem))] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="mt-10 flex snap-x snap-mandatory gap-6 overflow-x-auto px-[max(1rem,calc(50vw-min(10.5rem,50vw-1rem)))] pb-6 lg:scroll-pl-[max(2.5rem,calc(50vw-37.5rem))] lg:px-[max(2.5rem,calc(50vw-37.5rem))] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         aria-label="Reels de Instagram"
       >
         {reels.map((u, i) => (
-          <li key={u} className="w-[21rem] shrink-0 snap-center" aria-label={`Reel ${i + 1} de ${reels.length}`}>
-            <div className="-rotate-1 border-4 border-black bg-white shadow-[8px_8px_0_#2ec6ee] even:rotate-1">
+          <li key={u} className="w-[min(21rem,calc(100vw-2rem))] shrink-0 snap-center lg:snap-start" aria-label={`Reel ${i + 1} de ${reels.length}`}>
+            <div className="overflow-hidden border-4 border-black bg-white shadow-[8px_8px_0_#2ec6ee] sm:-rotate-1 sm:even:rotate-1">
               <blockquote className="instagram-media !m-0 !min-w-0 !max-w-none !border-0 !shadow-none" data-instgrm-permalink={u} data-instgrm-version="14" style={{ width: "100%" }}>
                 <a href={u} target="_blank" rel="noopener noreferrer" className="block min-h-[32rem] p-4 font-marker text-xl text-ink">
                   Ver este reel en Instagram

@@ -149,7 +149,7 @@ export function VideoDemo({ p, onToggle, big }: { p: Producto; onToggle?: (abier
     onToggle?.(next);
     blip(next ? 700 : 400);
   };
-  const caja = big ? "relative aspect-video w-full overflow-hidden border-4 border-black bg-ink shadow-[6px_6px_0_#121110]" : "absolute inset-0 z-10";
+  const caja = big ? "relative aspect-[4/3] w-full overflow-hidden border-4 border-black bg-ink shadow-[6px_6px_0_#121110] sm:aspect-video" : "absolute inset-0 z-10";
 
   return (
     <div className={caja}>
@@ -165,13 +165,13 @@ export function VideoDemo({ p, onToggle, big }: { p: Producto; onToggle?: (abier
           data-cursor="PLAY"
           className="group/play absolute inset-0 flex flex-col items-center justify-center bg-ink/25 text-ink transition-colors hover:bg-ink/40 focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-[-4px] focus-visible:outline-taxi"
         >
-          <span className="absolute bottom-14 left-2 -rotate-3 border-[3px] border-black bg-bone px-2 py-0.5 font-body text-xs font-bold uppercase tracking-[0.25em] shadow-[3px_3px_0_#000]">
+          <span className="absolute bottom-[3.25rem] left-2 -rotate-3 border-[3px] border-black bg-bone px-2 py-0.5 font-body text-xs font-bold uppercase tracking-[0.25em] shadow-[3px_3px_0_#000]">
             🎬 Video
           </span>
-          <span aria-hidden="true" className="play-pulse flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full border-4 border-black bg-taxi text-3xl shadow-[4px_4px_0_#000] transition-transform group-hover/play:scale-110 sm:h-20 sm:w-20">
+          <span aria-hidden="true" className="play-pulse flex h-16 w-16 items-center justify-center rounded-full border-4 border-black bg-taxi text-2xl shadow-[4px_4px_0_#000] transition-transform group-hover/play:scale-110 sm:h-20 sm:w-20 sm:text-3xl">
             <span className="translate-x-0.5">▶</span>
           </span>
-          <span className={`absolute inset-x-0 bottom-0 flex min-h-[48px] items-center justify-center gap-2 border-t-4 border-black bg-taxi px-3 font-block text-ink ${big ? "text-lg sm:text-xl" : "text-base"}`}>
+          <span className={`absolute inset-x-0 bottom-0 flex min-h-[44px] items-center justify-center gap-2 whitespace-nowrap border-t-4 border-black bg-taxi px-3 font-block text-ink ${big ? "text-sm sm:text-xl" : "text-sm sm:text-base"}`}>
             ▶ Mira cómo funciona
           </span>
         </button>

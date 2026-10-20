@@ -33,10 +33,10 @@ export default function Fachada() {
         <span aria-hidden="true" className="pointer-events-none absolute -left-2 top-1 rotate-[-10deg] font-tag text-5xl text-bubble/70 sm:text-7xl" style={{ filter: "url(#rough)" }}>
           dbh
         </span>
-        <span aria-hidden="true" className="pointer-events-none absolute right-[6%] -top-1 hidden rotate-[8deg] font-marker text-2xl text-navy/70 sm:block sm:text-4xl" style={{ filter: "url(#rough)" }}>
+        <span aria-hidden="true" className="pointer-events-none absolute right-[2%] -top-1 hidden rotate-[8deg] font-marker text-3xl text-navy/70 xl:block" style={{ filter: "url(#rough)" }}>
           nadie ✦ crew
         </span>
-        <span aria-hidden="true" className="pointer-events-none absolute bottom-0 left-[6%] hidden rotate-[-6deg] font-tag text-5xl text-brand/80 sm:block lg:left-[12%]" style={{ filter: "url(#rough)" }}>
+        <span aria-hidden="true" className="pointer-events-none absolute bottom-0 left-[2%] hidden rotate-[-6deg] font-tag text-5xl text-brand/80 xl:block" style={{ filter: "url(#rough)" }}>
           sin permiso
         </span>
         {/* chorreado desde el rótulo */}
