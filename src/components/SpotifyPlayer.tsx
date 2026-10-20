@@ -132,8 +132,10 @@ export default function SpotifyPlayer() {
       const h = el.offsetHeight;
       const margen = window.innerWidth >= 640 ? 20 : 12;
       if (minimized) {
-        const hueco = document.getElementById("hueco-rola")?.getBoundingClientRect();
-        setPos({ x: hueco ? hueco.right - w : window.innerWidth - w - margen, y: hueco ? hueco.top + (hueco.height - h) / 2 : margen });
+        // offsetTop/offsetLeft ignoran la animación de entrada de la barra (que la baja 20 px): así no se mide a medio camino
+        const hueco = document.getElementById("hueco-rola") as HTMLElement | null;
+        if (hueco) setPos({ x: hueco.offsetLeft + hueco.offsetWidth - w, y: hueco.offsetTop + (hueco.offsetHeight - h) / 2 });
+        else setPos({ x: window.innerWidth - w - margen, y: margen });
       } else {
         const safe = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--sab") || "0") || 0;
         setPos({ x: margen, y: window.innerHeight - h - margen - safe });
