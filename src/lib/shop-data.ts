@@ -7,13 +7,19 @@ import { finDelDia, ofertaVigente, type Promo } from "./offers";
 const K_PRODUCTS = "merch:products";
 const K_PROMO = "merch:promo";
 
+/**
+ * Las fotos de /public ahora son WebP. Un catálogo guardado antes del cambio todavía apunta a
+ * «/merch/foto.jpg»: se traduce a «.webp» al leerlo (las subidas desde el panel, /api/img/…, no cambian).
+ */
+export const fotoActual = (ruta?: string) => ruta?.replace(/^(\/(?:merch|obras|brand|stickers)\/[\w.\-/]+)\.(?:jpe?g|png)$/i, "$1.webp");
+
 /** Productos tal como se guardaron; si nunca se ha guardado nada, el catálogo de src/data/merch.ts. */
 export async function readProducts(): Promise<Producto[]> {
   const raw = await kv.get(K_PRODUCTS);
   if (raw) {
     try {
       const arr = JSON.parse(raw);
-      if (Array.isArray(arr)) return arr as Producto[];
+      if (Array.isArray(arr)) return (arr as Producto[]).map((p) => (p.imagen ? { ...p, imagen: fotoActual(p.imagen) } : p));
     } catch {
       /* usa el catálogo base */
     }
