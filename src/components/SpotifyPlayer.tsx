@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { store, useStore } from "@/lib/store";
-import { PLAYER_COOKIE, readPref, savePref } from "@/lib/prefs";
+import { PLAYER_COOKIE, readPref, savePref, SOUND_COOKIE } from "@/lib/prefs";
+import { sprayOff, unlockAudio } from "@/lib/audio";
 import { SONG_SRC, SONG_START, SONG_TITLE } from "@/data/site";
 
 const fmt = (s: number) => {
@@ -20,8 +21,7 @@ export default function SpotifyPlayer() {
   const entered = useStore((s) => s.entered);
   const sound = useStore((s) => s.sound);
   const [shown, setShown] = useState(false);
-  const [closed, setClosed] = useState(false);
-  const [minimized, setMinimized] = useState(false);
+  const [minimized, setMinimized] = useState(true);
   const [playing, setPlaying] = useState(false);
   const [time, setTime] = useState(0);
   const [dur, setDur] = useState(0);
@@ -69,7 +69,7 @@ export default function SpotifyPlayer() {
   useEffect(() => {
     if (!entered) return;
     const id = window.setTimeout(() => {
-      setMinimized(readPref(PLAYER_COOKIE) === "min");
+      setMinimized(readPref(PLAYER_COOKIE) !== "max"); // por defecto vive en la barra; abierto solo si así lo dejó
       setShown(true);
       begin();
     }, 400);
@@ -91,17 +91,25 @@ export default function SpotifyPlayer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sound, entered]);
 
+  // Play/pausa es también el interruptor de sonido del sitio (sustituye al «Sonido sí/no» de la barra):
+  // al dar play se activan la canción y los efectos; al pausar se apagan y se recuerda en la cookie.
   const toggle = () => {
     const a = audio.current;
     if (!a) return;
+    unlockAudio();
     if (a.paused) {
       userPaused.current = false;
       if (!started.current) started.current = true;
       if (a.ended || (a.currentTime < 1 && SONG_START > 0)) a.currentTime = SONG_START;
+      store.set({ sound: true });
+      savePref(SOUND_COOKIE, "si");
       a.play().catch(() => setPlaying(false));
     } else {
       userPaused.current = true;
       a.pause();
+      store.set({ sound: false });
+      savePref(SOUND_COOKIE, "no");
+      sprayOff();
     }
   };
 
@@ -110,7 +118,7 @@ export default function SpotifyPlayer() {
     savePref(PLAYER_COOKIE, value ? "min" : "max");
   };
 
-  const visible = shown && !closed;
+  const visible = shown;
 
   // Posición: abierto vive abajo a la izquierda; minimizado viaja (animado) a la esquina superior derecha,
   // justo debajo de los botones de la barra, para no estorbar al navegar.
@@ -124,9 +132,8 @@ export default function SpotifyPlayer() {
       const h = el.offsetHeight;
       const margen = window.innerWidth >= 640 ? 20 : 12;
       if (minimized) {
-        const hud = document.getElementById("hud")?.querySelector("div");
-        const top = (hud?.getBoundingClientRect().bottom ?? 72) + 4;
-        setPos({ x: window.innerWidth - w - margen, y: top });
+        const hueco = document.getElementById("hueco-rola")?.getBoundingClientRect();
+        setPos({ x: hueco ? hueco.right - w : window.innerWidth - w - margen, y: hueco ? hueco.top + (hueco.height - h) / 2 : margen });
       } else {
         const safe = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--sab") || "0") || 0;
         setPos({ x: margen, y: window.innerHeight - h - margen - safe });
@@ -146,9 +153,10 @@ export default function SpotifyPlayer() {
     <button
       type="button"
       onClick={toggle}
-      aria-label={playing ? "Pausar canción" : "Reproducir canción"}
+      aria-label={playing ? "Pausar la canción y apagar el sonido" : "Reproducir la canción y activar el sonido"}
+      aria-pressed={playing}
       data-cursor={playing ? "PAUSA" : "PLAY"}
-      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-[3px] border-black bg-brand text-ink"
+      className={`flex shrink-0 items-center justify-center rounded-full border-[3px] border-black bg-brand text-ink ${minimized ? "h-11 w-11" : "h-12 w-12"}`}
     >
       {playing ? (
         <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
@@ -171,7 +179,7 @@ export default function SpotifyPlayer() {
       inert={!visible}
       style={{ transform: `translate(${pos.x}px, ${visible ? pos.y : pos.y + 200}px)` }}
       className={`sp-widget fixed left-0 top-0 z-[65] border-4 border-black bg-ink transition-[transform,opacity,box-shadow,border-radius] duration-700 ease-[cubic-bezier(.2,.9,.3,1.1)] motion-reduce:transition-none ${
-        minimized ? "rounded-full p-1.5 shadow-[4px_4px_0_#2ec6ee]" : "w-[min(340px,calc(100vw-1.5rem))] p-3 shadow-[6px_6px_0_#2ec6ee]"
+        minimized ? "rounded-full p-1 shadow-[3px_3px_0_#2ec6ee]" : "w-[min(340px,calc(100vw-1.5rem))] p-3 shadow-[6px_6px_0_#2ec6ee]"
       } ${visible ? "opacity-100" : "pointer-events-none opacity-0"}`}
     >
       {/* el <audio> queda siempre montado: minimizar no corta la música.
@@ -190,15 +198,16 @@ export default function SpotifyPlayer() {
       {minimized ? (
         <div className="flex items-center gap-1">
           {playBtn}
-          <span aria-hidden="true" className={`px-1 font-block text-xl text-brand ${playing ? "animate-pulse motion-reduce:animate-none" : "opacity-60"}`}>
-            ♪
+          <span className={`hidden whitespace-nowrap px-1 font-block text-sm text-brand sm:inline ${playing ? "animate-pulse motion-reduce:animate-none" : "opacity-70"}`}>
+            <span aria-hidden="true">♪ </span>
+            {playing ? "Sonido sí" : "Sonido no"}
           </span>
           <button
             type="button"
             onClick={() => setMin(false)}
             aria-label="Mostrar el reproductor"
             data-cursor="ABRIR"
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-[3px] border-bone text-bone"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-[3px] border-bone text-bone"
           >
             <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
               <path d="M4 11l5-5 5 5" />
@@ -233,7 +242,7 @@ export default function SpotifyPlayer() {
               {fmt(time)} / {fmt(dur)}
             </p>
           </div>
-          <div className="flex shrink-0 flex-col gap-1 self-start">
+          <div className="flex shrink-0 self-start">
             <button
               type="button"
               onClick={() => setMin(true)}
@@ -244,18 +253,6 @@ export default function SpotifyPlayer() {
               <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M4 7l5 5 5-5" />
               </svg>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                userPaused.current = true;
-                audio.current?.pause();
-                setClosed(true);
-              }}
-              aria-label="Cerrar reproductor y pausar la canción"
-              className="flex h-11 w-11 items-center justify-center rounded-full border-[3px] border-bone font-block text-sm text-bone"
-            >
-              ✕
             </button>
           </div>
         </div>

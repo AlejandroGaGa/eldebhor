@@ -3,14 +3,12 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { store, useStore } from "@/lib/store";
-import { blip, sprayOff, unlockAudio } from "@/lib/audio";
+import { useStore } from "@/lib/store";
+import { blip } from "@/lib/audio";
 import { scrollToId, scrollToTop } from "@/lib/scroll";
-import { savePref, SOUND_COOKIE } from "@/lib/prefs";
 
 export default function Hud() {
   const entered = useStore((s) => s.entered);
-  const sound = useStore((s) => s.sound);
   const root = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -22,15 +20,6 @@ export default function Hud() {
   const irArriba = () => {
     blip(880);
     scrollToTop();
-  };
-
-  const toggleSound = () => {
-    unlockAudio();
-    const next = !store.get().sound;
-    store.set({ sound: next });
-    savePref(SOUND_COOKIE, next ? "si" : "no");
-    if (!next) sprayOff();
-    else blip(990);
   };
 
   return (
@@ -72,38 +61,10 @@ export default function Hud() {
             Merch
             <span className="sr-only"> (ir directo a la tienda)</span>
           </a>
-          <button
-            type="button"
-            onClick={toggleSound}
-            aria-pressed={sound}
-            aria-label={sound ? "Sonido sí" : "Sonido no"}
-            data-cursor={sound ? "MUTE" : "SONIDO"}
-            className="flex min-h-[48px] min-w-[48px] items-center justify-center gap-2 rounded-full bg-ink/80 px-3 text-sm text-bone backdrop-blur-sm"
-          >
-            <SoundBars on={sound} />
-            <span className="hidden whitespace-nowrap min-[560px]:inline">{sound ? "Sonido sí" : "Sonido no"}</span>
-          </button>
+          {/* aquí se acomoda el reproductor minimizado (SpotifyPlayer): es el control de sonido del sitio */}
+          <span id="hueco-rola" aria-hidden="true" className="block h-12 w-[7rem] shrink-0 sm:w-[13.5rem]" />
         </div>
       </div>
     </div>
-  );
-}
-
-function SoundBars({ on }: { on: boolean }) {
-  return (
-    <span className="flex h-5 items-end gap-[3px]" aria-hidden="true">
-      {[0, 1, 2, 3].map((i) => (
-        <span
-          key={i}
-          data-eq
-          className="w-[4px] rounded-sm bg-bone"
-          style={{
-            height: on ? undefined : "4px",
-            animation: on ? `eq 0.${5 + i}s ease-in-out ${i * 0.1}s infinite alternate` : "none",
-          }}
-        />
-      ))}
-      <style>{`@keyframes eq{from{height:4px}to{height:20px}}`}</style>
-    </span>
   );
 }
