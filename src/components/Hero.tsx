@@ -10,13 +10,14 @@ import { blip } from "@/lib/audio";
 import { scrollToId, useFinePointer, useReducedMotion } from "@/lib/scroll";
 import type { Producto } from "@/data/merch";
 import { descuento, fechaLarga, type Promo } from "@/lib/offers";
-import { BotonPedir, destacada, money, Opciones, Toast, usePedido, useToast } from "./ProductCard";
+import { BotonPedir, destacada, money, Opciones, Toast, usePedido, useToast, VideoDemo } from "./ProductCard";
 import Fachada from "./Fachada";
 
 
 /**
- * Portada = la tienda. Arriba el tag, a la izquierda la foto grande (las salpicaduras de los
- * chorreadores) y a la derecha la ficha de la pieza destacada, lista para pedir por WhatsApp.
+ * Portada = la tienda. Arriba el tag, a la izquierda el marco con las dos fotos de los chorreadores
+ * (las pinturas chorreando arriba y las botellas abajo) y a la derecha la ficha de la pieza destacada,
+ * lista para pedir por WhatsApp.
  * El muro sigue siendo el de siempre: se puede pintar con el clic y el logo salpica al tocarlo.
  */
 export default function Hero({ products, promo }: { products: Producto[]; promo: Promo | null }) {
@@ -31,6 +32,11 @@ export default function Hero({ products, promo }: { products: Producto[]; promo:
   });
   const { toast, say } = useToast();
   const pieza = destacada(products);
+  // La foto de las botellas que va debajo de las salpicaduras: la del chorreador destacado si lo hay, si no la del catálogo.
+  const esChorreador = (p: Producto) => /chorreador/i.test(p.id) || /chorreador/i.test(p.nombre) || p.id === "tintas-colores";
+  const botellas = pieza && esChorreador(pieza) && pieza.imagen ? pieza : products.find((p) => esChorreador(p) && p.imagen);
+  const fotoBotellas = botellas?.imagen ?? "/merch/tintas-colores.webp";
+  const altBotellas = botellas?.alt ?? "Vista desde arriba de muchas botellas gotero con tapa blanca en colores azul, rosa, negro, morado, menta, rojo y blanco";
 
   // Intro: la línea de venta aparece, la foto se pega al muro y la ficha cuelga
   useGSAP(
@@ -77,6 +83,7 @@ export default function Hero({ products, promo }: { products: Producto[]; promo:
         <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:gap-10">
           <figure data-hero-foto className="invisible relative mx-auto w-full max-w-[36rem] border-4 border-black bg-white shadow-[6px_6px_0_#121110] sm:-rotate-2 sm:shadow-[10px_10px_0_#121110] lg:max-w-none">
             <span aria-hidden="true" className="absolute -top-4 left-1/2 z-10 h-7 w-28 -translate-x-1/2 -rotate-3 border-2 border-black/60 bg-taxi/90 shadow-[2px_2px_0_#000]" />
+            {/* arriba: las pinturas chorreando; abajo: las botellas de donde salen. Van juntas en el mismo marco. */}
             <Image
               src="/merch/chorreadores-salpicaduras.webp"
               alt="Doce salpicaduras de pintura chorreando sobre blanco: azul, menta, azul rey, rosa, rojo, naranja, amarillo, verde, morado, lila, negro y blanco"
@@ -87,8 +94,23 @@ export default function Hero({ products, promo }: { products: Producto[]; promo:
               className="h-auto w-full"
               draggable={false}
             />
+            <p className="flex items-center justify-between gap-3 border-y-4 border-black bg-ink px-4 py-1.5 font-marker text-base text-bone sm:text-lg">
+              <span>↑ así chorrean</span>
+              <span>las botellas ↓</span>
+            </p>
+            <div className="relative aspect-[2/1] w-full overflow-hidden bg-[#f4f1ea]">
+              <Image
+                src={fotoBotellas}
+                alt={altBotellas}
+                fill
+                sizes="(min-width: 1024px) 680px, 92vw"
+                unoptimized={fotoBotellas.startsWith("/api/img/")}
+                className="object-cover"
+                draggable={false}
+              />
+            </div>
             <figcaption className="flex items-center justify-between gap-3 border-t-4 border-black bg-bone px-4 py-2 font-marker text-base text-ink sm:text-lg">
-              <span>así chorrean →</span>
+              <span>Chorreadores: la pintura y la botella</span>
               <span className="font-body text-sm font-bold uppercase tracking-[0.2em]">12 colores</span>
             </figcaption>
           </figure>
@@ -156,6 +178,8 @@ function FichaPortada({ p, promo, onToast }: { p: Producto; promo: Promo | null;
           </h2>
           <p className="mt-2 text-base leading-relaxed text-ink/80 sm:text-lg">{p.descripcion}</p>
         </div>
+
+        <VideoDemo p={p} big />
 
         <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           {oferta ? (

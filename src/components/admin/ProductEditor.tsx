@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useId, useState } from "react";
 import type { Producto } from "@/data/merch";
-import { api, fotoAJpg, ui } from "./client";
+import { api, fotoAJpg, subirVideo, ui } from "./client";
 
 type Props = {
   producto: Producto | null;
@@ -39,6 +39,8 @@ export default function ProductEditor({ producto, onCancel, onSaved, onDeleted }
   const [destacado, setDestacado] = useState(p?.destacado === true);
   const [imagen, setImagen] = useState(p?.imagen ?? "");
   const [alt, setAlt] = useState(p?.alt ?? "");
+  const [video, setVideo] = useState(p?.video ?? "");
+  const [videoPct, setVideoPct] = useState<number | null>(null);
   const [enOferta, setEnOferta] = useState(!!p?.oferta);
   const [ofPrecio, setOfPrecio] = useState(p?.oferta ? String(p.oferta.precio) : "");
   const [ofPct, setOfPct] = useState(p?.oferta && p.precio ? String(Math.round((1 - p.oferta.precio / p.precio) * 100)) : "");
@@ -83,6 +85,18 @@ export default function ProductEditor({ producto, onCancel, onSaved, onDeleted }
     setUploading(false);
   };
 
+  const subirClip = async (file: File | undefined) => {
+    if (!file) return;
+    setVideoPct(0);
+    setError("");
+    try {
+      setVideo(await subirVideo(file, setVideoPct));
+    } catch (e) {
+      setError((e as Error).message);
+    }
+    setVideoPct(null);
+  };
+
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -103,6 +117,7 @@ export default function ProductEditor({ producto, onCancel, onSaved, onDeleted }
       destacado,
       imagen: imagen || undefined,
       alt: alt || undefined,
+      video: video || undefined,
       oferta: enOferta ? { precio: on, ...(ofHasta ? { hasta: ofHasta } : {}) } : undefined,
     };
     setBusy(true);
@@ -186,6 +201,53 @@ export default function ProductEditor({ producto, onCancel, onSaved, onDeleted }
             <p className={ui.hint}>La leen los lectores de pantalla y se ve si la foto no carga. Ej. «Playera negra con el payaso arcoíris al frente».</p>
           </div>
         )}
+      </fieldset>
+
+      <fieldset className={`${ui.card} space-y-4`}>
+        <legend className="px-2 font-block text-base">Video de cómo funciona (opcional)</legend>
+        <p className="text-base">
+          Un clip corto que muestre el artículo en uso. En la tienda sale el botón «Ver cómo funciona» en la tarjeta de <strong>este</strong> producto; si el mismo clip sirve para otro, súbelo también ahí.
+        </p>
+        <div className="flex flex-wrap items-start gap-4">
+          <div className="relative w-full max-w-[18rem] shrink-0 overflow-hidden rounded-md border-2 border-bone/30 bg-ink">
+            {video ? (
+              <video src={video} controls playsInline preload="metadata" className="block aspect-video w-full bg-black" aria-label="Video actual del producto">
+                Tu navegador no reproduce este video.
+              </video>
+            ) : (
+              <span className="flex aspect-video items-center justify-center px-2 text-center text-sm text-bone/80">Sin video</span>
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <label htmlFor={f("video")} className={ui.label}>
+              {video ? "Cambiar el video" : "Subir un video"}
+            </label>
+            <input
+              id={f("video")}
+              type="file"
+              accept="video/mp4,video/webm,video/quicktime,.mp4,.mov,.webm"
+              disabled={videoPct !== null}
+              onChange={(e) => {
+                void subirClip(e.target.files?.[0]);
+                e.target.value = "";
+              }}
+              className="block w-full text-base file:mr-3 file:min-h-[48px] file:cursor-pointer file:rounded-md file:border-2 file:border-black file:bg-brand file:px-4 file:font-bold file:text-ink"
+            />
+            {videoPct !== null ? (
+              <div className="mt-2" role="status" aria-live="polite">
+                <p className="text-base font-bold">Subiendo… {Math.round(videoPct * 100)}%</p>
+                <progress value={videoPct} max={1} className="mt-1 h-3 w-full accent-[#2ec6ee]" aria-label="Avance de la subida" />
+              </div>
+            ) : (
+              <p className={ui.hint}>MP4, MOV o WebM de hasta 8 MB (unos 10–20 segundos en 720p). Si pesa más, recórtalo o bájale la calidad desde el celular.</p>
+            )}
+            {video && videoPct === null && (
+              <button type="button" onClick={() => setVideo("")} className={`${ui.secondary} mt-2`}>
+                Quitar el video
+              </button>
+            )}
+          </div>
+        </div>
       </fieldset>
 
       <fieldset className={`${ui.card} space-y-4`}>
@@ -285,7 +347,7 @@ export default function ProductEditor({ producto, onCancel, onSaved, onDeleted }
       {error && <p className={ui.error} role="alert">{error}</p>}
 
       <div className="flex flex-wrap items-center gap-3">
-        <button type="submit" disabled={busy || uploading} className={ui.primary}>
+        <button type="submit" disabled={busy || uploading || videoPct !== null} className={ui.primary}>
           {busy ? "Guardando…" : "Guardar producto"}
         </button>
         <button type="button" onClick={onCancel} className={ui.secondary}>

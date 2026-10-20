@@ -1,16 +1,19 @@
 import { revalidateTag } from "next/cache";
 import { kv } from "@/lib/db";
 import { body, err, guard, json, safe } from "@/lib/admin-api";
-import { imageIds, readProducts, writeProducts } from "@/lib/shop-data";
+import { imageIds, readProducts, videoIds, writeProducts } from "@/lib/shop-data";
+import { borrarVideo } from "@/lib/video-store";
 import { parseProducto } from "@/lib/validate";
 import type { Producto } from "@/data/merch";
 
 const refresh = () => revalidateTag("catalogo", { expire: 0 });
 
-/** Borra las fotos subidas que ya no usa ningún producto. */
+/** Borra las fotos y videos subidos que ya no usa ningún producto. */
 async function sweep(before: Producto[], after: Producto[]) {
   const keep = imageIds(after);
   for (const id of imageIds(before)) if (!keep.has(id)) await kv.del(`img:${id}`);
+  const keepV = videoIds(after);
+  for (const id of videoIds(before)) if (!keepV.has(id)) await borrarVideo(id);
 }
 
 export async function GET(req: Request) {

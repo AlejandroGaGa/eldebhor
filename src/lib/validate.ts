@@ -3,6 +3,7 @@ import type { Producto } from "@/data/merch";
 import type { Promo } from "./offers";
 
 const IMG_OK = /^(\/(merch|obras|stickers|brand)\/[\w.\-/]+|\/api\/img\/[a-f0-9]{16})$/;
+const VID_OK = /^\/api\/vid\/[a-f0-9]{16}$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const HEX = /^#[0-9a-f]{3,8}$/i;
 const FORMAS = ["playera", "sudadera", "gorra", "tote", "stickers", "print"] as const;
@@ -49,6 +50,12 @@ export function parseProducto(raw: unknown): R<Producto> {
     imagen = r.imagen;
   }
 
+  let video: string | undefined;
+  if (typeof r.video === "string" && r.video) {
+    if (!VID_OK.test(r.video)) return fail("El video no es válido: súbelo desde el panel.");
+    video = r.video;
+  }
+
   const p: Producto = {
     id,
     nombre,
@@ -65,6 +72,7 @@ export function parseProducto(raw: unknown): R<Producto> {
     const e = str(r.etiqueta, 20);
     if (e) p.etiqueta = e;
   }
+  if (video) p.video = video;
   if (imagen) {
     p.imagen = imagen;
     p.alt = str(r.alt, 200) || nombre;

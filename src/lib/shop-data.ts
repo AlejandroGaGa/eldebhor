@@ -42,6 +42,9 @@ export const writePromo = (p: Promo) => kv.set(K_PROMO, JSON.stringify(p));
 /** Ids de las fotos subidas (/api/img/<id>) que siguen en uso. */
 export const imageIds = (list: Producto[]) => new Set(list.map((p) => p.imagen?.match(/^\/api\/img\/([a-f0-9]{16})$/)?.[1]).filter(Boolean) as string[]);
 
+/** Ids de los videos subidos (/api/vid/<id>) que siguen en uso. */
+export const videoIds = (list: Producto[]) => new Set(list.map((p) => p.video?.match(/^\/api\/vid\/([a-f0-9]{16})$/)?.[1]).filter(Boolean) as string[]);
+
 /**
  * Lo que ve el público. Se guarda en caché por días (así casi no se consulta Upstash) y se invalida
  * al guardar desde el panel (etiqueta «catalogo»). Las ofertas con fecha vencida se quitan aquí; como

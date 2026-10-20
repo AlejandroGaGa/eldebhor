@@ -1,9 +1,9 @@
 "use client";
 
-export async function api<T>(url: string, opts: { method?: string; json?: unknown; raw?: Blob } = {}): Promise<T> {
+export async function api<T>(url: string, opts: { method?: string; json?: unknown; raw?: Blob; rawType?: string } = {}): Promise<T> {
   const res = await fetch(url, {
     method: opts.method ?? (opts.json !== undefined || opts.raw ? "POST" : "GET"),
-    headers: opts.json !== undefined ? { "Content-Type": "application/json" } : opts.raw ? { "Content-Type": "image/jpeg" } : undefined,
+    headers: opts.json !== undefined ? { "Content-Type": "application/json" } : opts.raw ? { "Content-Type": opts.rawType ?? "image/jpeg" } : undefined,
     body: opts.json !== undefined ? JSON.stringify(opts.json) : opts.raw,
     cache: "no-store",
   });
@@ -34,6 +34,32 @@ export async function fotoAJpg(file: File): Promise<Blob> {
     max = Math.round(max * 0.8);
   }
   throw new Error("La foto es muy pesada. Prueba con otra.");
+}
+
+const VIDEO_MAX = 8 * 1024 * 1024;
+const VIDEO_PART = 600 * 1024;
+const VIDEO_TIPOS = ["video/mp4", "video/webm", "video/quicktime"];
+
+/**
+ * Sube un clip corto por trozos (Upstash y Vercel limitan el tamaño de cada petición) y devuelve la
+ * URL /api/vid/<id>. `onProgress` recibe 0–1. Si el mismo archivo ya se subió, termina al primer trozo.
+ */
+export async function subirVideo(file: File, onProgress: (p: number) => void): Promise<string> {
+  const tipo = file.type || (/\.mov$/i.test(file.name) ? "video/quicktime" : /\.webm$/i.test(file.name) ? "video/webm" : "video/mp4");
+  if (!VIDEO_TIPOS.includes(tipo)) throw new Error("Elige un video MP4, MOV o WebM.");
+  if (file.size > VIDEO_MAX) throw new Error(`El video pesa ${(file.size / 1024 / 1024).toFixed(1)} MB y el máximo es 8 MB. Recórtalo o bájale la calidad (con el celular: «Guardar como 720p»).`);
+  if (!file.size) throw new Error("El archivo está vacío.");
+  const hash = await crypto.subtle.digest("SHA-256", await file.arrayBuffer());
+  const id = [...new Uint8Array(hash)].slice(0, 8).map((b) => b.toString(16).padStart(2, "0")).join("");
+  const partes = Math.ceil(file.size / VIDEO_PART);
+  for (let n = 0; n < partes; n++) {
+    const trozo = file.slice(n * VIDEO_PART, (n + 1) * VIDEO_PART);
+    const q = new URLSearchParams({ id, parte: String(n), partes: String(partes), bytes: String(file.size), tipo });
+    const r = await api<{ url?: string; listo: boolean }>(`/api/estudio/video?${q}`, { raw: trozo, rawType: "application/octet-stream" });
+    onProgress((n + 1) / partes);
+    if (r.listo && r.url) return r.url;
+  }
+  throw new Error("La subida no terminó. Intenta de nuevo.");
 }
 
 export const money = (n: number) => `$${n.toLocaleString("es-MX")}`;

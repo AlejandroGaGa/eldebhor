@@ -10,6 +10,8 @@
  * - `destacado`: la pieza que se vende en la portada (arriba de todo). Solo
  *   se usa la primera visible; si ninguna lo tiene, se toma la primera del catálogo.
  * - Sin `imagen` se dibuja el producto con `forma` / `color` / `tinta`.
+ * - `video`: clip corto de cómo funciona el artículo (se sube desde /estudio y queda en /api/vid/…).
+ *   En la tienda aparece el botón «Ver cómo funciona» que lo reproduce en el lugar de la foto.
  */
 export type Producto = {
   id: string;
@@ -31,6 +33,8 @@ export type Producto = {
   oferta?: { precio: number; hasta?: string };
   imagen?: string;
   alt?: string;
+  /** clip de cómo funciona, subido desde /estudio (/api/vid/<id>) */
+  video?: string;
   /** dibujo de ejemplo mientras no hay foto */
   forma?: "playera" | "sudadera" | "gorra" | "tote" | "stickers" | "print";
   color?: string;

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 import type { Producto } from "@/data/merch";
 import { descuento, ofertaValida } from "@/lib/offers";
 import { waLink } from "@/data/site";
@@ -132,6 +132,45 @@ export function BotonPedir({ p, pedir, big }: { p: Producto; pedir: () => void; 
   );
 }
 
+/**
+ * Botón «Ver cómo funciona» + el clip del producto. En la tarjeta se incrusta en el lugar de la foto;
+ * en la ficha de portada va debajo de la descripción. Nada se reproduce hasta que la persona lo pide.
+ */
+export function VideoDemo({ p, onToggle, big }: { p: Producto; onToggle?: (abierto: boolean) => void; big?: boolean }) {
+  const id = useId();
+  const [abierto, setAbierto] = useState(false);
+  if (!p.video) return null;
+  const toggle = () => {
+    const next = !abierto;
+    setAbierto(next);
+    onToggle?.(next);
+    blip(next ? 700 : 400);
+  };
+  // en la tarjeta el botón flota sobre la foto (abajo a la derecha; arriba cuando el video está abierto, para no tapar sus controles)
+  const pos = big ? "" : abierto ? "absolute right-2 top-2 z-30" : "absolute bottom-2 right-2 z-20";
+  return (
+    <div className={big ? "space-y-3" : "contents"}>
+      <button
+        type="button"
+        onClick={toggle}
+        aria-expanded={abierto}
+        aria-controls={`${id}-video`}
+        data-cursor={abierto ? "CERRAR" : "PLAY"}
+        className={`${pos} inline-flex min-h-[48px] items-center justify-center gap-2 rounded-sm border-[3px] border-black bg-taxi px-4 font-block text-ink shadow-[4px_4px_0_#000] transition-transform hover:-rotate-1 active:translate-x-1 active:translate-y-1 active:shadow-none ${big ? "text-lg" : "text-base"}`}
+      >
+        <span aria-hidden="true">{abierto ? "■" : "▶"}</span> {abierto ? "Cerrar video" : "Ver cómo funciona"}
+      </button>
+      <div id={`${id}-video`} hidden={!abierto} className={big ? "overflow-hidden border-4 border-black bg-black" : "absolute inset-0 z-10 bg-black"}>
+        {abierto && (
+          <video src={p.video} controls autoPlay playsInline preload="metadata" className="h-full w-full object-contain" aria-label={`Video: cómo funciona ${p.nombre}`}>
+            Tu navegador no reproduce este video.
+          </video>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /** Tarjeta de la tienda (cuelga del rack). */
 export default function ProductCard({ p, onToast }: { p: Producto; onToast: (m: string) => void }) {
   const { opcion, elegir, error, pedir, enOferta, etiqueta, cur } = usePedido(p, onToast);
@@ -159,6 +198,7 @@ export default function ProductCard({ p, onToast }: { p: Producto; onToast: (m: 
             </div>
           )}
           {!p.imagen && <span className="absolute bottom-2 left-2 rounded-sm bg-ink/85 px-1.5 py-0.5 font-body text-[11px] text-bone">imagen de ejemplo</span>}
+          {p.video && <VideoDemo p={p} />}
           {enOferta && !p.agotado && (
             <span className="absolute left-2 top-2 -rotate-3 border-4 border-black bg-[#c10f24] px-3 py-1 font-block text-lg text-white shadow-[3px_3px_0_#000]">
               Oferta −{descuento(p)}%
