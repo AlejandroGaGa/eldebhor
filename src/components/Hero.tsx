@@ -80,8 +80,8 @@ export default function Hero({ products, promo }: { products: Producto[]; promo:
           for (let j = 0; j < 4; j++) pp.drip(r.left - s.left + r.width * gsap.utils.random(0.15, 0.85), r.bottom - s.top - r.height * 0.2, "#2ec6ee", gsap.utils.random(4, 9));
         })
         .fromTo(sub, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.45 }, "-=0.25")
-        .fromTo(foto, { autoAlpha: 0, x: -90, rotation: -12, scale: 0.9 }, { autoAlpha: 1, x: 0, rotation: -2, scale: 1, duration: 0.8, ease: "back.out(1.8)" }, "-=0.3")
-        .fromTo(ficha, { autoAlpha: 0, y: -120, rotation: 10 }, { autoAlpha: 1, y: 0, rotation: 1, duration: 1.3, ease: "elastic.out(1, 0.4)", transformOrigin: "50% 0%" }, "-=0.55")
+        .fromTo(foto, { autoAlpha: 0, x: -90, rotation: -12, scale: 0.9 }, { autoAlpha: 1, x: 0, rotation: 0, scale: 1, duration: 0.8, ease: "back.out(1.8)", clearProps: "transform" }, "-=0.3")
+        .fromTo(ficha, { autoAlpha: 0, y: -120, rotation: 10 }, { autoAlpha: 1, y: 0, rotation: 0, duration: 1.3, ease: "elastic.out(1, 0.4)", transformOrigin: "50% 0%", clearProps: "transform" }, "-=0.55")
         .fromTo(extras, { autoAlpha: 0, scale: 0 }, { autoAlpha: 1, scale: 1, stagger: 0.06, duration: 0.5, ease: "back.out(3)" }, "-=1");
       return () => {
         signal.cancelled = true;
@@ -105,7 +105,7 @@ export default function Hero({ products, promo }: { products: Producto[]; promo:
   };
 
   return (
-    <section ref={section} className="bricks relative isolate overflow-hidden" aria-labelledby="hero-title">
+    <section ref={section} className="bricks relative isolate overflow-x-clip overflow-y-hidden" aria-labelledby="hero-title">
       <canvas ref={canvas} className="absolute inset-0 h-full w-full touch-pan-y" data-cursor={fine ? "PINTA" : undefined} aria-hidden="true" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,.55))]" aria-hidden="true" />
 
@@ -161,7 +161,7 @@ export default function Hero({ products, promo }: { products: Producto[]; promo:
 
         {/* foto grande + ficha */}
         <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:gap-10">
-          <figure data-hero-foto className="invisible relative -rotate-2 border-4 border-black bg-white shadow-[10px_10px_0_#121110]">
+          <figure data-hero-foto className="invisible relative mx-auto w-full max-w-[36rem] border-4 border-black bg-white shadow-[6px_6px_0_#121110] sm:-rotate-2 sm:shadow-[10px_10px_0_#121110] lg:max-w-none">
             <span aria-hidden="true" className="absolute -top-4 left-1/2 z-10 h-7 w-28 -translate-x-1/2 -rotate-3 border-2 border-black/60 bg-taxi/90 shadow-[2px_2px_0_#000]" />
             <Image
               src="/merch/chorreadores-salpicaduras.webp"
@@ -217,19 +217,19 @@ function FichaPortada({ p, promo, onToast }: { p: Producto; promo: Promo | null;
   const oferta = enOferta && p.oferta && p.precio != null;
 
   return (
-    <article data-hero-ficha className="pointer-events-auto invisible relative rotate-1 border-4 border-black bg-white text-ink shadow-[10px_10px_0_#121110]" aria-labelledby="pieza-name">
+    <article data-hero-ficha className="pointer-events-auto invisible relative mx-auto w-full max-w-[36rem] border-4 border-black bg-white text-ink shadow-[6px_6px_0_#121110] sm:rotate-1 sm:shadow-[10px_10px_0_#121110] lg:max-w-none" aria-labelledby="pieza-name">
       {/* gancho */}
       <svg viewBox="0 0 40 46" className="absolute -top-11 left-1/2 h-12 w-10 -translate-x-1/2" aria-hidden="true">
         <path d="M20 44 V22 C20 10 34 10 34 20 C34 28 26 28 26 24" fill="none" stroke="#0b0b0b" strokeWidth="5" strokeLinecap="round" />
       </svg>
       {/* sello de oferta */}
       {!p.agotado && (
-        <span className="absolute -left-3 -top-5 z-10 -rotate-6 border-4 border-black bg-bubble px-3 py-1 font-block text-lg text-white shadow-[4px_4px_0_#000] sm:text-xl">
+        <span className="absolute left-2 -top-5 z-10 -rotate-6 border-4 border-black bg-bubble px-3 py-1 font-block text-lg text-white shadow-[4px_4px_0_#000] sm:-left-3 sm:text-xl">
           {oferta ? `Oferta −${descuento(p)}%` : "¡Oferta!"}
         </span>
       )}
       {p.agotado && (
-        <span className="absolute -left-3 -top-5 z-10 -rotate-6 border-4 border-[#e3122b] bg-white px-3 py-1 font-block text-lg text-[#c10f24] shadow-[4px_4px_0_#000]">
+        <span className="absolute left-2 -top-5 z-10 -rotate-6 border-4 border-[#e3122b] bg-white sm:-left-3 px-3 py-1 font-block text-lg text-[#c10f24] shadow-[4px_4px_0_#000]">
           Agotado
         </span>
       )}
