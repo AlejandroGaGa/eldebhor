@@ -20,6 +20,7 @@ import dynamic from "next/dynamic";
 import Gallery from "./Gallery";
 import Merch from "./Merch";
 import Reels from "./Reels";
+import Donaciones from "./Donaciones";
 import LazySection from "./LazySection";
 import Footer from "./Footer";
 import SubirBtn from "./SubirBtn";
@@ -143,6 +144,7 @@ export default function Experience({ products, promo, reels }: { products: Produ
             <Reels reels={reels} />
           </LazySection>
         )}
+        <Donaciones />
         <CautionTape />
         <Manifesto />
         <LazySection className="min-h-[100dvh] bg-[#0b0b0c]">

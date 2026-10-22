@@ -42,6 +42,9 @@ export default function Hud({ conReels = false }: { conReels?: boolean }) {
             <a href="#merch" data-cursor="MERCH" className="flex min-h-[48px] items-center rounded-full bg-ink/80 px-4 text-sm font-bold text-bone backdrop-blur-sm hover:text-brand">
               Merch
             </a>
+            <a href="#donaciones" data-cursor="DONAR" className="flex min-h-[48px] items-center rounded-full bg-ink/80 px-4 text-sm font-bold text-bone backdrop-blur-sm hover:text-brand">
+              Donar
+            </a>
             {conReels && (
               <a href="#reels" data-cursor="IG" className="flex min-h-[48px] items-center rounded-full bg-ink/80 px-4 text-sm font-bold text-bone backdrop-blur-sm hover:text-brand">
                 Reels

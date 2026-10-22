@@ -34,3 +34,15 @@ export const SONG_SRC = "/rolita.mp3";
 export const SONG_TITLE = "Rolita";
 /** Segundo en el que empieza (0:04). Pon 0 para que arranque desde el principio. */
 export const SONG_START = 4;
+
+/**
+ * Datos para donaciones (transferencia bancaria). La CLABE va solo con dígitos (18);
+ * en pantalla se muestra separada para leerla fácil.
+ */
+export const DONACION = {
+  banco: "BBVA",
+  beneficiario: "Cristian Isaac Saucedo Pérez",
+  clabe: "012180015877512352",
+};
+/** CLABE en bloques (012 180 01587751235 2) para mostrar. */
+export const clabeBonita = (c: string) => `${c.slice(0, 3)} ${c.slice(3, 6)} ${c.slice(6, 17)} ${c.slice(17)}`;
