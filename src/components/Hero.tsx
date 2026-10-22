@@ -10,7 +10,7 @@ import { blip } from "@/lib/audio";
 import { scrollToId, useFinePointer, useReducedMotion } from "@/lib/scroll";
 import type { Producto } from "@/data/merch";
 import { descuento, fechaLarga, type Promo } from "@/lib/offers";
-import { BotonPedir, destacada, money, Opciones, Toast, usePedido, useToast, VideoDemo } from "./ProductCard";
+import { BotonPedir, destacada, money, Opciones, Toast, usePedido, useToast, VerFoto, VideoDemo } from "./ProductCard";
 import Fachada from "./Fachada";
 
 
@@ -172,6 +172,8 @@ function FichaPortada({ p, promo, onToast }: { p: Producto; promo: Promo | null;
         </div>
 
         <VideoDemo p={p} big />
+
+        <VerFoto p={p} big />
 
         <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           {oferta ? (

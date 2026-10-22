@@ -6,6 +6,7 @@ import type { Producto } from "@/data/merch";
 import { descuento, ofertaValida } from "@/lib/offers";
 import { waLink } from "@/data/site";
 import { blip, slap } from "@/lib/audio";
+import { getLenis } from "@/lib/scroll";
 import ProductArt from "./ProductArt";
 
 export const money = (n: number, cur: string) => `$${n.toLocaleString("es-MX")} ${cur}`;
@@ -133,6 +134,101 @@ export function BotonPedir({ p, pedir, big }: { p: Producto; pedir: () => void; 
 }
 
 /**
+ * Previsualizar la foto del producto: un botón «Ver foto» que abre la imagen en grande
+ * (lightbox igual al de la galería), con nombre y precio abajo. Cierra con ✕, Esc o tocando fuera.
+ * - En la tarjeta va encima del recuadro de la foto (`className` lo posiciona).
+ * - En la ficha de portada (`big`) es un botón normal, porque ahí la foto no se ve completa.
+ */
+export function VerFoto({ p, className, big }: { p: Producto; className?: string; big?: boolean }) {
+  const id = useId();
+  const dialog = useRef<HTMLDialogElement>(null);
+  const [abierto, setAbierto] = useState(false);
+  if (!p.imagen) return null;
+  const cur = p.moneda ?? "MXN";
+  const enOferta = ofertaValida(p);
+
+  const abrir = () => {
+    setAbierto(true);
+    dialog.current?.showModal();
+    getLenis()?.stop();
+    blip(900);
+  };
+  const cerrar = () => dialog.current?.close();
+  const onClosed = () => {
+    setAbierto(false);
+    getLenis()?.start();
+    blip(400);
+  };
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={abrir}
+        data-cursor="VER"
+        aria-haspopup="dialog"
+        aria-controls={`${id}-foto`}
+        className={
+          className ??
+          (big
+            ? "inline-flex min-h-[48px] items-center justify-center gap-2 self-start border-4 border-black bg-white px-4 font-block text-base text-ink shadow-[4px_4px_0_#000] transition-transform hover:-rotate-1 hover:scale-[1.03] active:translate-x-1 active:translate-y-1 active:shadow-none"
+            : "")
+        }
+      >
+        <span aria-hidden="true">🔍</span> Ver foto{big ? " de la pieza" : ""}
+        <span className="sr-only"> en grande</span>
+      </button>
+
+      <dialog
+        id={`${id}-foto`}
+        ref={dialog}
+        onClose={onClosed}
+        onClick={(e) => e.target === dialog.current && cerrar()}
+        aria-labelledby={`${id}-foto-title`}
+        className="m-auto max-h-[100dvh] w-full max-w-4xl bg-transparent p-3 text-bone backdrop:bg-black/85 backdrop:backdrop-blur-sm sm:p-6"
+      >
+        {abierto && (
+          <div className="relative flex flex-col border-4 border-black bg-ink shadow-[10px_10px_0_#2ec6ee]">
+            <div className="relative mx-auto aspect-square w-full max-h-[70dvh] shrink-0 overflow-hidden bg-black">
+              <Image src={p.imagen} alt={p.alt ?? p.nombre} fill sizes="(min-width:1024px) 896px, 100vw" unoptimized={p.imagen.startsWith("/api/img/")} className="object-contain" />
+              {p.agotado && (
+                <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-12 border-4 border-[#e3122b] bg-white/90 px-4 py-1 font-block text-3xl text-[#c10f24]">
+                  Agotado
+                </span>
+              )}
+            </div>
+            <div className="flex min-w-0 flex-col gap-3 p-4 sm:flex-row sm:items-end sm:justify-between sm:p-6">
+              <div className="min-w-0">
+                <h3 id={`${id}-foto-title`} className="font-marker text-2xl text-brand sm:text-3xl">
+                  {p.nombre}
+                </h3>
+                <p className="mt-1 font-block text-lg">
+                  {enOferta && p.oferta && p.precio != null ? (
+                    <>
+                      <span className="sr-only">Precio de oferta: {money(p.oferta.precio, cur)}. Precio normal: {money(p.precio, cur)}.</span>
+                      <s aria-hidden="true" className="mr-2 text-base text-bone/60">{money(p.precio, cur)}</s>
+                      <span aria-hidden="true">{money(p.oferta.precio, cur)}</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="sr-only">Precio: </span>
+                      {p.precio != null ? money(p.precio, cur) : "Consultar"}
+                    </>
+                  )}
+                </p>
+              </div>
+              <button type="button" onClick={cerrar} data-cursor="CERRAR" className="min-h-[48px] shrink-0 rounded-full border-[3px] border-brand bg-brand px-5 font-bold text-ink">
+                Cerrar
+              </button>
+            </div>
+          </div>
+        )}
+      </dialog>
+    </>
+  );
+}
+
+/**
  * El video «cómo funciona» de un producto. Mientras está cerrado se ve como un video de verdad, no como
  * un botón perdido: un círculo de play grande latiendo en el centro, una franja «▶ Mira cómo funciona»
  * abajo y una etiqueta «VIDEO» arriba. Tocar en cualquier parte lo reproduce (nada se reproduce solo).
@@ -201,6 +297,7 @@ export function VideoDemo({ p, onToggle, big }: { p: Producto; onToggle?: (abier
 /** Tarjeta de la tienda (cuelga del rack). */
 export default function ProductCard({ p, onToast }: { p: Producto; onToast: (m: string) => void }) {
   const { opcion, elegir, error, pedir, enOferta, etiqueta, cur } = usePedido(p, onToast);
+  const [videoAbierto, setVideoAbierto] = useState(false);
 
   return (
     <article className="group relative" aria-labelledby={`${p.id}-name`}>
@@ -225,7 +322,13 @@ export default function ProductCard({ p, onToast }: { p: Producto; onToast: (m: 
             </div>
           )}
           {!p.imagen && <span className="absolute bottom-2 left-2 rounded-sm bg-ink/85 px-1.5 py-0.5 font-body text-[11px] text-bone">imagen de ejemplo</span>}
-          {p.video && <VideoDemo p={p} />}
+          {p.video && <VideoDemo p={p} onToggle={setVideoAbierto} />}
+          {!videoAbierto && (
+            <VerFoto
+              p={p}
+              className={`absolute right-2 z-20 inline-flex min-h-[44px] items-center gap-1.5 rounded-sm border-[3px] border-black bg-bone px-3 font-block text-sm text-ink shadow-[3px_3px_0_#000] transition-transform hover:scale-105 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none ${p.video ? "bottom-[3.25rem]" : "bottom-2"}`}
+            />
+          )}
           {enOferta && !p.agotado && (
             <span className="absolute left-2 top-2 z-20 -rotate-3 border-4 border-black bg-[#c10f24] px-3 py-1 font-block text-lg text-white shadow-[3px_3px_0_#000]">
               Oferta −{descuento(p)}%
